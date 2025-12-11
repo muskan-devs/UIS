@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - University Information System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%);
+            color: white;
+            padding: 1.2rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-left h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .header-left p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .notification-btn:hover {
+            background: #f4e4a1;
+            color: #2c2c2c;
+        }
+
+        .logout-btn {
+            padding: 0.6rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: white;
+            color: #2c2c2c;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .welcome-section {
+            margin-bottom: 2rem;
+        }
+
+        .welcome-section h2 {
+            color: #2c2c2c;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-section p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .student-info-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            height: fit-content;
+        }
+
+        .student-info-card:hover {
+            border-color: #f4e4a1;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #f4e4a1;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 1rem;
+            border: 4px solid white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c2c2c;
+            margin-bottom: 0.3rem;
+        }
+
+        .profile-id {
+            font-size: 0.95rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            color: #2c2c2c;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #f4e4a1;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c2c2c;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .navigation-section {
+            margin-top: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            color: #2c2c2c;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .nav-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            text-decoration: none;
+            display: block;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            border-color: #f4e4a1;
+        }
+
+        .nav-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .nav-title {
+            font-size: 1.2rem;
+            color: #2c2c2c;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-description {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .notices-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-top: 2rem;
+        }
+
+        .notice-item {
+            padding: 1.2rem;
+            border-left: 4px solid #f4e4a1;
+            background: #fafafa;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .notice-item:hover {
+            background: #f5f5f5;
+            border-left-color: #e8d67a;
+        }
+
+        .notice-date {
+            color: #888;
+            font-size: 0.8rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .notice-title {
+            color: #2c2c2c;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .notice-text {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            color: #2c2c2c;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .nav-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-left">
+            <div>
+                <h1>🎓 University Information System</h1>
+                <p>Student Portal</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="notification-btn" onclick="showNotifications()">🔔</button>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="welcome-section">
+            <h2>Welcome back, Muskan! 👋</h2>
+            <p>Here's what's happening with your academics today</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Student Info Card -->
+            <div class="student-info-card">
+                <div class="profile-header">
+                    <div class="profile-avatar">👨‍🎓</div>
+                    <div class="profile-name">Muskan Choudhary</div>
+                    <div class="profile-id">Roll No: CS2023090</div>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Course</span>
+                    <span class="info-value">B.Tech CSE</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Year</span>
+                    <span class="info-value">3rd Year</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Semester</span>
+                    <span class="info-value">5th Semester</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Contact</span>
+                    <span class="info-value">+91-9876543210</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Email</span>
+                    <span class="info-value">student.cse90@university.edu</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Status</span>
+                    <span class="info-value"><span class="badge">Active</span></span>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <div class="stat-box">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-value">8.65</div>
+                    <div class="stat-label">Current CGPA</div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-value">6</div>
+                    <div class="stat-label">Enrolled Courses</div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-value">28</div>
+                    <div class="stat-label">Credits Earned</div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-icon">⚠️</div>
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Active Backlogs</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Cards -->
+        <div class="navigation-section">
+            <h3 class="section-title">Quick Access</h3>
+            <div class="nav-grid">
+                <div class="nav-card" onclick="navigateTo('profile')">
+                    <div class="nav-icon">👤</div>
+                    <div class="nav-title">My Profile</div>
+                    <div class="nav-description">View and edit your personal information and account settings</div>
+                </div>
+
+                <div class="nav-card" onclick="navigateTo('courses')">
+                    <div class="nav-icon">📚</div>
+                    <div class="nav-title">My Courses</div>
+                    <div class="nav-description">View enrolled courses, schedules, and course materials</div>
+                </div>
+
+                <div class="nav-card" onclick="navigateTo('results')">
+                    <div class="nav-icon">📝</div>
+                    <div class="nav-title">My Results</div>
+                    <div class="nav-description">Check your semester-wise examination results and marks</div>
+                </div>
+
+                <div class="nav-card" onclick="navigateTo('backlogs')">
+                    <div class="nav-icon">⚠️</div>
+                    <div class="nav-title">My Backlogs</div>
+                    <div class="nav-description">View pending subjects and backlog clearance information</div>
+                </div>
+
+                <div class="nav-card" onclick="navigateTo('gradesheet')">
+                    <div class="nav-icon">📄</div>
+                    <div class="nav-title">My Grade Sheet</div>
+                    <div class="nav-description">Download official grade sheets and transcripts</div>
+                </div>
+
+                <div class="nav-card" onclick="navigateTo('cgpa')">
+                    <div class="nav-icon">📊</div>
+                    <div class="nav-title">My CGPA</div>
+                    <div class="nav-description">View detailed CGPA calculation and semester-wise breakdown</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notices Section -->
+        <div class="notices-section">
+            <h3 class="section-title">📢 Recent Notices</h3>
+
+            <div class="notice-item">
+                <div class="notice-date">December 8, 2025</div>
+                <div class="notice-title">Mid-Semester Examination Schedule</div>
+                <div class="notice-text">Mid-semester exams will commence from December 18, 2025. Please check the
+                    detailed schedule on the portal.</div>
+            </div>
+
+            <div class="notice-item">
+                <div class="notice-date">December 5, 2025</div>
+                <div class="notice-title">Winter Break Announcement</div>
+                <div class="notice-text">University will remain closed from December 20, 2025 to January 5, 2026 for
+                    winter break.</div>
+            </div>
+
+            <div class="notice-item">
+                <div class="notice-date">December 1, 2025</div>
+                <div class="notice-title">Library Extended Hours</div>
+                <div class="notice-text">The central library will now remain open until 10 PM on weekdays during
+                    examination season.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function navigateTo(section) {
+            const sections = {
+                'profile': 'My Profile',
+                'courses': 'My Courses',
+                'results': 'My Results',
+                'backlogs': 'My Backlogs',
+                'gradesheet': 'My Grade Sheet',
+                'cgpa': 'My CGPA'
+            };
+
+            alert(`Navigating to ${sections[section]}...\n\nIn production, this would take you to:\n/student/${section}`);
+        }
+
+        function showNotifications() {
+            alert('🔔 Notifications:\n\n• Assignment submission due tomorrow\n• New course material uploaded in Data Structures\n• Mid-semester exam schedule published');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = "index.html";
+            }
+        }
+        function goToPage(page) {
+            window.location.href = page;
+        }
+        function navigateTo(section) {
+            const pages = {
+                profile: "myprofile.html",
+                courses: "mycourses.html",
+                results: "myresults.html",
+                backlogs: "mybacklogs.html",
+                gradesheet: "mygradesheet.html",
+                cgpa: "mycgpa.html"
+            };
+
+            window.location.href = pages[section];
+        }
+
+    </script>
+</body>
+
+</html>

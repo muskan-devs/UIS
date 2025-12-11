@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Grade Sheet - University Information System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); min-height: 100vh; }
+        .top-bar { background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%); color: white; padding: 1.2rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .page-title { font-size: 1.8rem; font-weight: 600; }
+        .back-btn { padding: 0.6rem 1.5rem; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; cursor: pointer; font-size: 0.95rem; transition: all 0.3s ease; }
+        .back-btn:hover { background: white; color: #2c2c2c; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+        .action-bar { display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; }
+        .btn { padding: 0.9rem 2rem; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: all 0.3s ease; display: flex; align-items: center; gap: 0.5rem; }
+        .btn-primary { background: linear-gradient(135deg, #f4e4a1 0%, #e8d67a 100%); color: #2c2c2c; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(244, 228, 161, 0.4); }
+        .btn-secondary { background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%); color: white; }
+        .btn-secondary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .gradesheet-container { background: white; border-radius: 12px; box-shadow: 0 4px 25px rgba(0,0,0,0.1); overflow: hidden; }
+        .gradesheet { padding: 3rem; background: white; }
+        .header-section { text-align: center; border-bottom: 3px solid #f4e4a1; padding-bottom: 2rem; margin-bottom: 2rem; }
+        .university-logo { width: 80px; height: 80px; background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 1rem; border: 3px solid #2c2c2c; }
+        .university-name { font-size: 2rem; font-weight: 700; color: #2c2c2c; margin-bottom: 0.3rem; }
+        .document-title { font-size: 1.5rem; font-weight: 600; color: #666; margin-top: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+        .student-details { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem; background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%); padding: 1.5rem; border-radius: 8px; }
+        .detail-item { display: flex; gap: 0.5rem; }
+        .detail-label { font-weight: 700; color: #2c2c2c; min-width: 120px; }
+        .detail-value { color: #666; }
+        .grades-section { margin-bottom: 2rem; }
+        .section-title { font-size: 1.3rem; font-weight: 700; color: #2c2c2c; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f4e4a1; }
+        .grades-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+        .grades-table thead { background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%); }
+        .grades-table th { padding: 0.8rem; text-align: left; font-weight: 700; color: #2c2c2c; font-size: 0.9rem; border: 1px solid #e0e0e0; }
+        .grades-table td { padding: 0.8rem; border: 1px solid #e0e0e0; font-size: 0.9rem; color: #666; }
+        .grades-table tbody tr:nth-child(even) { background: #fafafa; }
+        .semester-header { background: #2c2c2c; color: white; font-weight: 700; }
+        .grade-cell { font-weight: 700; color: #2c2c2c; text-align: center; }
+        .gpa-summary { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-bottom: 2rem; }
+        .gpa-card { background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%); padding: 1.5rem; border-radius: 10px; text-align: center; border: 2px solid #2c2c2c; }
+        .gpa-label { font-size: 1rem; font-weight: 600; color: #666; margin-bottom: 0.5rem; text-transform: uppercase; }
+        .gpa-value { font-size: 3rem; font-weight: 700; color: #2c2c2c; }
+        .grading-scale { margin-bottom: 2rem; }
+        .scale-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem; }
+        .scale-item { display: flex; justify-content: space-between; padding: 0.5rem 1rem; background: #fafafa; border-radius: 5px; font-size: 0.85rem; }
+        .scale-grade { font-weight: 700; color: #2c2c2c; }
+        .scale-points { color: #666; }
+        .signature-section { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3rem; margin-top: 3rem; }
+        .signature-box { text-align: center; }
+        .signature-line { border-top: 2px solid #2c2c2c; padding-top: 0.5rem; margin-top: 3rem; }
+        .signature-label { font-weight: 600; color: #666; font-size: 0.9rem; }
+        .signature-title { font-size: 0.85rem; color: #888; margin-top: 0.3rem; }
+        .footer-section { text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 2px solid #f4e4a1; }
+        .issue-date { color: #666; font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .footer-note { color: #888; font-size: 0.85rem; font-style: italic; }
+        @media print { .top-bar, .action-bar, .back-btn { display: none; } .container { padding: 0; max-width: 100%; } .gradesheet { padding: 2rem; } body { background: white; } }
+        @media (max-width: 768px) { .container { padding: 1rem; } .gradesheet { padding: 1.5rem; } .student-details { grid-template-columns: 1fr; } .gpa-summary { grid-template-columns: 1fr; } .signature-section { grid-template-columns: 1fr; gap: 2rem; } .action-bar { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <h2 class="page-title">My Grade Sheet</h2>
+        <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+    </div>
+    <div class="container">
+        <div class="action-bar">
+            <button class="btn btn-primary" onclick="printGradeSheet()">
+                <span>🖨️</span> Print Grade Sheet
+            </button>
+            <button class="btn btn-secondary" onclick="downloadPDF()">
+                <span>📄</span> Download as PDF
+            </button>
+        </div>
+
+        <div class="gradesheet-container">
+            <div class="gradesheet" id="gradesheet">
+                <div class="header-section">
+                    <div class="university-logo">🎓</div>
+                    <div class="university-name">UNIVERSITY INFORMATION SYSTEM</div>
+                    <div style="color: #666; font-size: 0.95rem;">Accredited by NAAC with 'A' Grade</div>
+                    <div class="document-title">Official Grade Sheet</div>
+                </div>
+
+                <div class="student-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Student Name:</span>
+                        <span class="detail-value">Muskan Choudhary</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Roll Number:</span>
+                        <span class="detail-value">CS2023090</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Course:</span>
+                        <span class="detail-value">B.Tech Computer Science Engineering</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Academic Year:</span>
+                        <span class="detail-value">2023-2026 (3rd Year)</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Date of Issue:</span>
+                        <span class="detail-value" id="issueDate"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Admission Year:</span>
+                        <span class="detail-value">2023</span>
+                    </div>
+                </div>
+
+                <div class="grades-section">
+                    <div class="section-title">📊 Academic Performance</div>
+                    
+                    <table class="grades-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 15%">Course Code</th>
+                                <th style="width: 40%">Course Name</th>
+                                <th style="width: 10%">Credits</th>
+                                <th style="width: 15%">Marks</th>
+                                <th style="width: 10%">Grade</th>
+                                <th style="width: 10%">Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="semester-header">
+                                <td colspan="6">Semester 1 (GPA: 8.20)</td>
+                            </tr>
+                            <tr>
+                                <td>PH101</td>
+                                <td>Engineering Physics</td>
+                                <td>4</td>
+                                <td>82/100</td>
+                                <td class="grade-cell">A</td>
+                                <td>8.0</td>
+                            </tr>
+                            <tr>
+                                <td>MA101</td>
+                                <td>Engineering Mathematics I</td>
+                                <td>4</td>
+                                <td>78/100</td>
+                                <td class="grade-cell">A</td>
+                                <td>8.0</td>
+                            </tr>
+                            <tr class="semester-header">
+                                <td colspan="6">Semester 2 (GPA: 8.45)</td>
+                            </tr>
+                            <tr>
+                                <td>CH201</td>
+                                <td>Engineering Chemistry</td>
+                                <td>4</td>
+                                <td>88/100</td>
+                                <td class="grade-cell">E</td>
+                                <td>9.0</td>
+                            </tr>
+                            <tr>
+                                <td>MA201</td>
+                                <td>Engineering Mathematics II</td>
+                                <td>4</td>
+                                <td>81/100</td>
+                                <td class="grade-cell">A</td>
+                                <td>8.0</td>
+                            </tr>
+                            <tr class="semester-header">
+                                <td colspan="6">Semester 3 (GPA: 8.60)</td>
+                            </tr>
+                            <tr>
+                                <td>CS301</td>
+                                <td>Data Structures & Algorithm</td>
+                                <td>4</td>
+                                <td>92/100</td>
+                                <td class="grade-cell">O</td>
+                                <td>10.0</td>
+                            </tr>
+                            <tr>
+                                <td>CS302</td>
+                                <td>Computer Organization</td>
+                                <td>3</td>
+                                <td>84/100</td>
+                                <td class="grade-cell">A</td>
+                                <td>8.0</td>
+                            </tr>
+                            <tr class="semester-header">
+                                <td colspan="6">Semester 4 (GPA: 8.80)</td>
+                            </tr>
+                            <tr>
+                                <td>CS401</td>
+                                <td>Design & Analysis of Algorithm</td>
+                                <td>4</td>
+                                <td>90/100</td>
+                                <td class="grade-cell">E</td>
+                                <td>9.0</td>
+                            </tr>
+                            <tr>
+                                <td>CS402</td>
+                                <td>Formal Language & Automata Theory</td>
+                                <td>4</td>
+                                <td>88/100</td>
+                                <td class="grade-cell">E</td>
+                                <td>9.0</td>
+                            </tr>
+                            <tr class="semester-header">
+                                <td colspan="6">Semester 5 (GPA: 8.75)</td>
+                            </tr>
+                            <tr>
+                                <td>CS501</td>
+                                <td>Software Engineering</td>
+                                <td>4</td>
+                                <td>88/100</td>
+                                <td class="grade-cell">E</td>
+                                <td>9.0</td>
+                            </tr>
+                            <tr>
+                                <td>CS502</td>
+                                <td>Operating System</td>
+                                <td>3</td>
+                                <td>82/100</td>
+                                <td class="grade-cell">A</td>
+                                <td>8.0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="gpa-summary">
+                    <div class="gpa-card">
+                        <div class="gpa-label">Cumulative CGPA</div>
+                        <div class="gpa-value">8.65</div>
+                    </div>
+                    <div class="gpa-card">
+                        <div class="gpa-label">Total Credits Earned</div>
+                        <div class="gpa-value">128</div>
+                    </div>
+                </div>
+
+                <div class="grading-scale">
+                    <div class="section-title">📋 Grading Scale</div>
+                    <div class="scale-grid">
+                        <div class="scale-item">
+                            <span class="scale-grade">O (Outstanding)</span>
+                            <span class="scale-points">10.0</span>
+                        </div>
+                        <div class="scale-item">
+                            <span class="scale-grade">E (Excellent)</span>
+                            <span class="scale-points">9.0</span>
+                        </div>
+                        <div class="scale-item">
+                            <span class="scale-grade">A (Very Good)</span>
+                            <span class="scale-points">8.0</span>
+                        </div>
+                        <div class="scale-item">
+                            <span class="scale-grade">B (Good)</span>
+                            <span class="scale-points">7.0</span>
+                        </div>
+                        <div class="scale-item">
+                            <span class="scale-grade">C (Above Average)</span>
+                            <span class="scale-points">6.0</span>
+                        </div>
+                        <div class="scale-item">
+                            <span class="scale-grade">D (Average)</span>
+                            <span class="scale-points">4.0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="signature-section">
+                    <div class="signature-box">
+                        <div class="signature-line">
+                            <div class="signature-label">Head of Department</div>
+                            <div class="signature-title">Computer Science & Engineering</div>
+                        </div>
+                    </div>
+                    <div class="signature-box">
+                        <div class="signature-line">
+                            <div class="signature-label">Controller of Examinations</div>
+                            <div class="signature-title">University Information System</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <div class="issue-date">Date of Issue: <span id="footerDate"></span></div>
+                    <div class="footer-note">This is a computer-generated document. No signature is required.</div>
+                    <div class="footer-note" style="margin-top: 0.5rem;">Verify authenticity at: www.university.edu/verify</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function setDates() {
+            const today = new Date();
+            const dateString = today.toLocaleDateString('en-IN', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            document.getElementById('issueDate').textContent = dateString;
+            document.getElementById('footerDate').textContent = dateString;
+        }
+
+        function printGradeSheet() {
+            window.print();
+        }
+
+        function downloadPDF() {
+            alert('📄 Downloading Grade Sheet as PDF...\n\nIn production, this would generate and download a PDF file of your grade sheet.');
+            // In production, you would use a library like jsPDF or html2pdf
+            // Example: html2pdf().from(document.getElementById('gradesheet')).save('gradesheet.pdf');
+        }
+
+        function goBack() {
+            alert('Returning to Student Dashboard...');
+        }
+        function goBack() {
+    window.location.href = "studentdash.html";
+        }
+
+        setDates();
+    </script>
+</body>
+</html>

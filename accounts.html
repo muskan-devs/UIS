@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accounts Management - University Information System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; min-height: 100vh; }
+        .top-bar { background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%); color: white; padding: 1.2rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .page-title { font-size: 1.8rem; font-weight: 600; }
+        .back-btn { padding: 0.6rem 1.5rem; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; cursor: pointer; font-size: 0.95rem; transition: all 0.3s ease; }
+        .back-btn:hover { background: white; color: #2c2c2c; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .summary-card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .summary-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; }
+        .summary-card.income::before { background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); }
+        .summary-card.expenditure::before { background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); }
+        .summary-card.balance::before { background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%); }
+        .summary-card:hover { transform: translateY(-5px); box-shadow: 0 6px 25px rgba(0,0,0,0.12); }
+        .summary-icon { width: 60px; height: 60px; background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 1rem; }
+        .summary-label { font-size: 0.95rem; color: #666; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
+        .summary-value { font-size: 2.5rem; font-weight: 700; color: #2c2c2c; }
+        .tab-container { display: flex; gap: 1rem; margin-bottom: 2rem; }
+        .tab-btn { padding: 0.9rem 2rem; background: white; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: all 0.3s ease; font-weight: 500; }
+        .tab-btn:hover { border-color: #f4e4a1; }
+        .tab-btn.active { background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%); border-color: #f4e4a1; color: #2c2c2c; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .content-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+        .form-card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .form-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #f4e4a1; }
+        .form-icon { width: 45px; height: 45px; background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+        .form-header h3 { color: #2c2c2c; font-size: 1.2rem; }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; font-weight: 600; color: #2c2c2c; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input, .form-group textarea { width: 100%; padding: 0.8rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.95rem; transition: all 0.3s ease; font-family: inherit; }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #f4e4a1; box-shadow: 0 0 0 3px rgba(244, 228, 161, 0.2); }
+        .form-group textarea { resize: vertical; min-height: 70px; }
+        .btn { padding: 0.8rem 1.8rem; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: all 0.3s ease; width: 100%; }
+        .btn-primary { background: linear-gradient(135deg, #f4e4a1 0%, #e8d67a 100%); color: #2c2c2c; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(244, 228, 161, 0.4); }
+        .cashbook-section { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .section-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid #f4e4a1; }
+        .section-icon { width: 50px; height: 50px; background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .section-header h3 { color: #2c2c2c; font-size: 1.4rem; }
+        .transaction-list { display: flex; flex-direction: column; gap: 0.8rem; max-height: 500px; overflow-y: auto; }
+        .transaction-item { padding: 1rem; background: #fafafa; border-radius: 8px; border-left: 4px solid #f4e4a1; transition: all 0.3s ease; }
+        .transaction-item:hover { background: #f5f5f5; }
+        .transaction-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .transaction-type { font-weight: 700; font-size: 0.95rem; color: #2c2c2c; }
+        .transaction-amount { font-weight: 700; font-size: 1.05rem; }
+        .amount-income { color: #28a745; }
+        .amount-expenditure { color: #dc3545; }
+        .transaction-details { font-size: 0.85rem; color: #666; }
+        .transaction-date { font-size: 0.8rem; color: #888; margin-top: 0.3rem; }
+        .filter-section { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+        .filter-select { padding: 0.7rem 1rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.95rem; cursor: pointer; flex: 1; }
+        .filter-select:focus { outline: none; border-color: #f4e4a1; }
+        @media (max-width: 1024px) { .content-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .container { padding: 1rem; } .summary-grid { grid-template-columns: 1fr; } .tab-container { flex-direction: column; } .filter-section { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <h2 class="page-title">Accounts Management</h2>
+        <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+    </div>
+    <div class="container">
+        <div class="summary-grid">
+            <div class="summary-card income">
+                <div class="summary-icon">💰</div>
+                <div class="summary-label">Total Income</div>
+                <div class="summary-value">₹<span id="totalIncome">0</span></div>
+            </div>
+            <div class="summary-card expenditure">
+                <div class="summary-icon">💸</div>
+                <div class="summary-label">Total Expenditure</div>
+                <div class="summary-value">₹<span id="totalExpenditure">0</span></div>
+            </div>
+            <div class="summary-card balance">
+                <div class="summary-icon">📊</div>
+                <div class="summary-label">Current Balance</div>
+                <div class="summary-value">₹<span id="balance">0</span></div>
+            </div>
+        </div>
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="switchTab('income')">💰 Add Income</button>
+            <button class="tab-btn" onclick="switchTab('expenditure')">💸 Add Expenditure</button>
+            <button class="tab-btn" onclick="switchTab('cashbook')">📖 Cash Book</button>
+        </div>
+        <div id="income-tab" class="tab-content active">
+            <div class="content-grid">
+                <div class="form-card">
+                    <div class="form-header"><div class="form-icon">🏫</div><h3>Yearly Grant</h3></div>
+                    <form id="grantForm" onsubmit="addGrant(event)">
+                        <div class="form-group"><label>Amount (₹) *</label><input type="number" id="grantAmount" required step="0.01"></div>
+                        <div class="form-group"><label>Source *</label><input type="text" id="grantSource" required placeholder="e.g., UGC, Government"></div>
+                        <div class="form-group"><label>Date *</label><input type="date" id="grantDate" required></div>
+                        <div class="form-group"><label>Description</label><textarea id="grantDesc" placeholder="Details"></textarea></div>
+                        <button type="submit" class="btn btn-primary">Add Grant</button>
+                    </form>
+                </div>
+                <div class="form-card">
+                    <div class="form-header"><div class="form-icon">🤝</div><h3>Consultancy Fund</h3></div>
+                    <form id="consultForm" onsubmit="addConsultancy(event)">
+                        <div class="form-group"><label>Amount (₹) *</label><input type="number" id="consultAmount" required step="0.01"></div>
+                        <div class="form-group"><label>Client *</label><input type="text" id="consultClient" required placeholder="Organization name"></div>
+                        <div class="form-group"><label>Date *</label><input type="date" id="consultDate" required></div>
+                        <div class="form-group"><label>Description</label><textarea id="consultDesc" placeholder="Project details"></textarea></div>
+                        <button type="submit" class="btn btn-primary">Add Fund</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="expenditure-tab" class="tab-content">
+            <div class="content-grid">
+                <div class="form-card">
+                    <div class="form-header"><div class="form-icon">🔧</div><h3>Equipment</h3></div>
+                    <form id="equipForm" onsubmit="addExpenditure(event,'Equipment')">
+                        <div class="form-group"><label>Amount (₹) *</label><input type="number" id="equipAmount" required step="0.01"></div>
+                        <div class="form-group"><label>Item *</label><input type="text" id="equipItem" required placeholder="Equipment name"></div>
+                        <div class="form-group"><label>Date *</label><input type="date" id="equipDate" required></div>
+                        <div class="form-group"><label>Description</label><textarea id="equipDesc" placeholder="Details"></textarea></div>
+                        <button type="submit" class="btn btn-primary">Add Expense</button>
+                    </form>
+                </div>
+                <div class="form-card">
+                    <div class="form-header"><div class="form-icon">📚</div><h3>Books</h3></div>
+                    <form id="booksForm" onsubmit="addExpenditure(event,'Books')">
+                        <div class="form-group"><label>Amount (₹) *</label><input type="number" id="booksAmount" required step="0.01"></div>
+                        <div class="form-group"><label>Details *</label><input type="text" id="booksItem" required placeholder="Book details"></div>
+                        <div class="form-group"><label>Date *</label><input type="date" id="booksDate" required></div>
+                        <div class="form-group"><label>Description</label><textarea id="booksDesc" placeholder="Details"></textarea></div>
+                        <button type="submit" class="btn btn-primary">Add Expense</button>
+                    </form>
+                </div>
+            </div>
+            <div class="content-grid" style="margin-top:2rem">
+                <div class="form-card">
+                    <div class="form-header"><div class="form-icon">✏️</div><h3>Stationery</h3></div>
+                    <form id="statForm" onsubmit="addExpenditure(event,'Stationery')">
+                        <div class="form-group"><label>Amount (₹) *</label><input type="number" id="statAmount" required step="0.01"></div>
+                        <div class="form-group"><label>Items *</label><input type="text" id="statItem" required placeholder="Stationery items"></div>
+                        <div class="form-group"><label>Date *</label><input type="date" id="statDate" required></div>
+                        <div class="form-group"><label>Description</label><textarea id="statDesc" placeholder="Details"></textarea></div>
+                        <button type="submit" class="btn btn-primary">Add Expense</button>
+                    </form>
+                </div>
+                <div class="form-card">
+                    <div class="form-header"><div class="form-icon">📋</div><h3>Others</h3></div>
+                    <form id="otherForm" onsubmit="addExpenditure(event,'Others')">
+                        <div class="form-group"><label>Amount (₹) *</label><input type="number" id="otherAmount" required step="0.01"></div>
+                        <div class="form-group"><label>Category *</label><input type="text" id="otherItem" required placeholder="Expense category"></div>
+                        <div class="form-group"><label>Date *</label><input type="date" id="otherDate" required></div>
+                        <div class="form-group"><label>Description</label><textarea id="otherDesc" placeholder="Details"></textarea></div>
+                        <button type="submit" class="btn btn-primary">Add Expense</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="cashbook-tab" class="tab-content">
+            <div class="cashbook-section">
+                <div class="section-header"><div class="section-icon">📖</div><h3>Cash Book - All Transactions</h3></div>
+                <div class="filter-section">
+                    <select class="filter-select" id="typeFilter" onchange="filter()">
+                        <option value="all">All Transactions</option>
+                        <option value="income">Income Only</option>
+                        <option value="expenditure">Expenditure Only</option>
+                    </select>
+                    <select class="filter-select" id="catFilter" onchange="filter()">
+                        <option value="all">All Categories</option>
+                        <option value="Grant">Grant</option>
+                        <option value="Consultancy">Consultancy</option>
+                        <option value="Equipment">Equipment</option>
+                        <option value="Books">Books</option>
+                        <option value="Stationery">Stationery</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                <div class="transaction-list" id="transList"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let t=[{type:'income',cat:'Grant',amt:5000000,src:'Govt of India',date:'2024-01-15',desc:'Annual UGC Grant'},{type:'income',cat:'Consultancy',amt:250000,src:'Tech Corp',date:'2024-02-10',desc:'AI Project'},{type:'expenditure',cat:'Equipment',amt:450000,src:'Lab Equipment',date:'2024-02-20',desc:'Microscopes'},{type:'expenditure',cat:'Books',amt:125000,src:'500 Books',date:'2024-03-05',desc:'Library update'}];
+        function fmt(n){return n.toLocaleString('en-IN',{maximumFractionDigits:2});}
+        function updateSum(){let inc=t.filter(x=>x.type==='income').reduce((s,x)=>s+x.amt,0),exp=t.filter(x=>x.type==='expenditure').reduce((s,x)=>s+x.amt,0);document.getElementById('totalIncome').textContent=fmt(inc);document.getElementById('totalExpenditure').textContent=fmt(exp);document.getElementById('balance').textContent=fmt(inc-exp);}
+        function render(f=t){let l=document.getElementById('transList');if(!f.length){l.innerHTML='<div style="text-align:center;padding:2rem;color:#999">No transactions</div>';return;}l.innerHTML=f.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(x=>`<div class="transaction-item"><div class="transaction-header"><span class="transaction-type">${x.cat} - ${x.src}</span><span class="transaction-amount ${x.type==='income'?'amount-income':'amount-expenditure'}">${x.type==='income'?'+':'-'}₹${fmt(x.amt)}</span></div><div class="transaction-details">${x.desc}</div><div class="transaction-date">${new Date(x.date).toLocaleDateString('en-IN',{year:'numeric',month:'long',day:'numeric'})}</div></div>`).join('');}
+        function filter(){let tf=document.getElementById('typeFilter').value,cf=document.getElementById('catFilter').value,f=t;if(tf!=='all')f=f.filter(x=>x.type===tf);if(cf!=='all')f=f.filter(x=>x.cat===cf);render(f);}
+        function add(type,cat,amt,src,date,desc){t.push({type,cat,amt,src,date,desc});updateSum();render();alert(`✅ ${cat} ${type==='income'?'income':'expense'} of ₹${fmt(amt)} added!`);}
+        function addGrant(e){e.preventDefault();add('income','Grant',+document.getElementById('grantAmount').value,document.getElementById('grantSource').value,document.getElementById('grantDate').value,document.getElementById('grantDesc').value||'Grant');document.getElementById('grantForm').reset();}
+        function addConsultancy(e){e.preventDefault();add('income','Consultancy',+document.getElementById('consultAmount').value,document.getElementById('consultClient').value,document.getElementById('consultDate').value,document.getElementById('consultDesc').value||'Consultancy');document.getElementById('consultForm').reset();}
+        function addExpenditure(e,cat){e.preventDefault();let pre=cat.toLowerCase().substring(0,5);add('expenditure',cat,+document.getElementById(pre+'Amount').value,document.getElementById(pre+'Item').value,document.getElementById(pre+'Date').value,document.getElementById(pre+'Desc').value||cat);e.target.reset();}
+        function switchTab(tab){['income','expenditure','cashbook'].forEach((x,i)=>{document.getElementById(x+'-tab').classList.toggle('active',x===tab);document.querySelectorAll('.tab-btn')[i].classList.toggle('active',x===tab);});if(tab==='cashbook'){render();updateSum();}}
+         function goBack() {
+            alert('Returning to Admin Dashboard...');
+        }
+        function goBack() {
+    window.location.href = "UISadmindash.html";
+}
+        render();updateSum();
+    </script>
+</body>
+</html>

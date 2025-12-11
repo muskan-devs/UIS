@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login - University Information System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+        }
+
+        .login-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 1.5rem;
+            border: 5px solid white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c2c2c;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-subtitle {
+            font-size: 1rem;
+            color: #666;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-body {
+            padding: 2.5rem;
+        }
+
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .welcome-text h3 {
+            font-size: 1.3rem;
+            color: #2c2c2c;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-text p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #2c2c2c;
+            margin-bottom: 0.6rem;
+            font-size: 0.95rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            color: #888;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #f4e4a1;
+            box-shadow: 0 0 0 4px rgba(244, 228, 161, 0.2);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #888;
+            user-select: none;
+        }
+
+        .password-toggle:hover {
+            color: #2c2c2c;
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #f4e4a1;
+        }
+
+        .forgot-link {
+            color: #666;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .forgot-link:hover {
+            color: #2c2c2c;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 1.1rem;
+            background: linear-gradient(135deg, #f4e4a1 0%, #e8d67a 100%);
+            color: #2c2c2c;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(244, 228, 161, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 1rem;
+            position: relative;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .quick-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .quick-link-btn {
+            flex: 1;
+            padding: 0.9rem;
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+
+        .quick-link-btn:hover {
+            background: #fafafa;
+            border-color: #f4e4a1;
+            color: #2c2c2c;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1.5rem;
+            border-left: 4px solid #2196f3;
+        }
+
+        .info-box-content {
+            display: flex;
+            align-items: start;
+            gap: 0.8rem;
+        }
+
+        .info-icon {
+            font-size: 1.3rem;
+        }
+
+        .info-text {
+            color: #1565c0;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .footer-links a {
+            color: #666;
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin: 0 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #2c2c2c;
+        }
+
+        @media (max-width: 480px) {
+            .login-header {
+                padding: 2rem 1.5rem;
+            }
+
+            .login-body {
+                padding: 1.5rem;
+            }
+
+            .login-icon {
+                width: 80px;
+                height: 80px;
+                font-size: 2.5rem;
+            }
+
+            .login-title {
+                font-size: 1.6rem;
+            }
+
+            .quick-links {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-icon">👨‍🎓</div>
+                <div class="login-title">Student Portal</div>
+                <div class="login-subtitle">University Information System</div>
+            </div>
+
+            <div class="login-body">
+                <div class="welcome-text">
+                    <h3>Welcome Back!</h3>
+                    <p>Sign in to access your academic dashboard</p>
+                </div>
+
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="rollNumber">Roll Number</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🎫</span>
+                            <input type="text" id="rollNumber" placeholder="Enter your roll number" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔒</span>
+                            <input type="password" id="password" placeholder="Enter your password" required>
+                            <span class="password-toggle" onclick="togglePassword()">👁️</span>
+                        </div>
+                    </div>
+
+                    <div class="remember-forgot">
+                        <label class="remember-me">
+                            <input type="checkbox" id="rememberMe">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-link" onclick="forgotPassword(event)">Forgot Password?</a>
+                    </div>
+
+                    <button type="submit" class="login-btn">🚀 Login to Dashboard</button>
+                </form>
+
+                <div class="divider">
+                    <span>Quick Access</span>
+                </div>
+
+                <div class="quick-links">
+                    <a href="#" class="quick-link-btn" onclick="viewResults(event)">📊 View Results</a>
+                    <a href="#" class="quick-link-btn" onclick="checkNotices(event)">📢 Notices</a>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-content">
+                        <span class="info-icon">ℹ️</span>
+                        <div class="info-text">
+                            <strong>First time user?</strong> Your default password is your date of birth (DDMMYYYY).
+                            Please change it after first login.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <a href="#" onclick="contactSupport(event)">Contact Support</a>
+                    <a href="#" onclick="helpGuide(event)">Help Guide</a>
+                    <a href="#" onclick="systemStatus(event)">System Status</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.querySelector('.password-toggle');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.textContent = '👁️';
+            }
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+
+            const rollNumber = document.getElementById('rollNumber').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            // Simple validation
+            if (rollNumber && password) {
+                alert(`Welcome, ${rollNumber}! 🎓\n\nLogging you into the Student Dashboard...\n\nIn production, this would authenticate your credentials and redirect you to your personalized dashboard.`);
+
+                // In production, you would make an API call here
+                // Example: window.location.href = '/student/dashboard';
+            }
+        }
+        function handleLogin(event) {
+            event.preventDefault();
+
+            const rollNumber = document.getElementById('rollNumber').value;
+            const password = document.getElementById('password').value;
+
+            if (rollNumber && password) {
+
+                // OPTIONAL: you can do real checks here later
+
+                // Redirect to student dashboard
+                window.location.href = "studentdash.html";
+            }
+        }
+
+
+        function forgotPassword(event) {
+            event.preventDefault();
+            alert('🔑 Password Recovery\n\nYou would be redirected to the password reset page where you can recover your account using your registered email or phone number.');
+        }
+
+        function viewResults(event) {
+            event.preventDefault();
+            alert('📊 Quick Results Access\n\nYou would be redirected to view your latest examination results.');
+        }
+
+        function checkNotices(event) {
+            event.preventDefault();
+            alert('📢 University Notices\n\nYou would see the latest notices and announcements from the university.');
+        }
+
+        function contactSupport(event) {
+            event.preventDefault();
+            alert('📞 Contact Support\n\nSupport Email: support@university.edu\nPhone: +91-XXXX-XXXXXX\nTimings: 9 AM - 6 PM (Mon-Fri)');
+        }
+
+        function helpGuide(event) {
+            event.preventDefault();
+            alert('📖 Help Guide\n\nYou would be redirected to the student portal user guide with detailed instructions on how to use the system.');
+        }
+
+        function systemStatus(event) {
+            event.preventDefault();
+            alert('✅ System Status\n\nAll systems operational\nLast updated: Just now\n\n🟢 Student Portal: Online\n🟢 Results Portal: Online\n🟢 Payment Gateway: Online');
+        }
+
+        // Add enter key support for better UX
+        document.getElementById('rollNumber').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                document.getElementById('password').focus();
+            }
+        });
+    </script>
+</body>
+
+</html>

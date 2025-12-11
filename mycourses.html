@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Registered Courses - University Information System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%);
+            color: white;
+            padding: 1.2rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .back-btn {
+            padding: 0.6rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: #2c2c2c;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header-card {
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .semester-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .semester-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .semester-details h2 {
+            font-size: 1.8rem;
+            color: #2c2c2c;
+            margin-bottom: 0.3rem;
+        }
+
+        .semester-details p {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c2c2c;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .courses-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .title-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .card-title h3 {
+            font-size: 1.3rem;
+            color: #2c2c2c;
+        }
+
+        .search-box {
+            padding: 0.6rem 1rem;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            width: 250px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #2c2c2c;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #fafafa;
+        }
+
+        th {
+            padding: 1.2rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: #2c2c2c;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #f4e4a1;
+        }
+
+        td {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .course-code {
+            font-weight: 700;
+            color: #2c2c2c;
+            font-size: 1rem;
+        }
+
+        .course-name {
+            color: #2c2c2c;
+            font-weight: 500;
+        }
+
+        .credits-badge {
+            display: inline-block;
+            padding: 0.4rem 0.9rem;
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            color: #2c2c2c;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .type-core {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+        }
+
+        .type-elective {
+            background: linear-gradient(135deg, #cce5ff 0%, #b8daff 100%);
+            color: #004085;
+        }
+
+        .type-lab {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+            color: #856404;
+        }
+
+        .info-note {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 1.2rem 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+            margin-top: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .note-icon {
+            font-size: 1.5rem;
+        }
+
+        .note-text {
+            color: #1565c0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 0.9rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f4e4a1 0%, #e8d67a 100%);
+            color: #2c2c2c;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(244, 228, 161, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #999;
+            font-size: 1rem;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .card-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            th,
+            td {
+                padding: 0.8rem;
+                font-size: 0.85rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-bar">
+        <h2 class="page-title">My Registered Courses</h2>
+        <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+    </div>
+    <div class="container">
+        <div class="header-card">
+            <div class="header-content">
+                <div class="semester-info">
+                    <div class="semester-icon">📚</div>
+                    <div class="semester-details">
+                        <h2>5th Semester - Academic Year 2025-26</h2>
+                        <p>B.Tech Computer Science Engineering • Roll No: CS2023090</p>
+                    </div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-value">6</div>
+                        <div class="stat-label">Total Courses</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">15</div>
+                        <div class="stat-label">Total Credits</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">4</div>
+                        <div class="stat-label">Core Courses</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">2</div>
+                        <div class="stat-label">Electives</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="courses-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="title-icon">📘</div>
+                    <h3>Course Details</h3>
+                </div>
+                <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search courses..."
+                    onkeyup="searchCourses()">
+            </div>
+            <div class="table-container">
+                <table id="coursesTable">
+                    <thead>
+                        <tr>
+                            <th>Course Code</th>
+                            <th>Course Name</th>
+                            <th>Credits</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody id="coursesTableBody">
+                        <tr>
+                            <td class="course-code">CS501</td>
+                            <td class="course-name">Software Engineering</td>
+                            <td><span class="credits-badge">3 Credits</span></td>
+                            <td><span class="type-badge type-core">Core</span></td>
+                        </tr>
+                        <tr>
+                            <td class="course-code">CS502</td>
+                            <td class="course-name">Operating System</td>
+                            <td><span class="credits-badge">3 Credits</span></td>
+                            <td><span class="type-badge type-core">Core</span></td>
+                        </tr>
+                        <tr>
+                            <td class="course-code">CS503</td>
+                            <td class="course-name">Object Oriented Programming</td>
+                            <td><span class="credits-badge">3 Credits</span></td>
+                            <td><span class="type-badge type-core">Core</span></td>
+                        </tr>
+                        <tr>
+                            <td class="course-code">CS504</td>
+                            <td class="course-name">Compiler Design</td>
+                            <td><span class="credits-badge">3 Credits</span></td>
+                            <td><span class="type-badge type-core">Core</span></td>
+                        </tr>
+                        <tr>
+                            <td class="course-code">CS505</td>
+                            <td class="course-name">Artificial Intelligence</td>
+                            <td><span class="credits-badge">3 Credits</span></td>
+                            <td><span class="type-badge type-elective">Elective</span></td>
+                        </tr>
+                        <tr>
+                            <td class="course-code">CS506</td>
+                            <td class="course-name">Constitution of India</td>
+                            <td><span class="credits-badge">0 Credits</span></td>
+                            <td><span class="type-badge type-elective">Elective</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="info-note">
+            <span class="note-icon">ℹ️</span>
+            <div class="note-text">
+                <strong>Note:</strong> This is a read-only view of your registered courses for the current semester.
+                Course registration for the next semester will open during the registration period. For any
+                discrepancies, please contact the academic office.
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="downloadSchedule()">📄 Download Course Schedule</button>
+            <button class="btn btn-secondary" onclick="viewTimetable()">📅 View Class Timetable</button>
+        </div>
+    </div>
+
+    <script>
+        function searchCourses() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const rows = document.querySelectorAll('#coursesTableBody tr');
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                const courseCode = row.cells[0].textContent.toLowerCase();
+                const courseName = row.cells[1].textContent.toLowerCase();
+
+                if (courseCode.includes(searchTerm) || courseName.includes(searchTerm)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            if (visibleCount === 0 && searchTerm !== '') {
+                if (!document.getElementById('noResults')) {
+                    const tbody = document.getElementById('coursesTableBody');
+                    const emptyRow = document.createElement('tr');
+                    emptyRow.id = 'noResults';
+                    emptyRow.innerHTML = '<td colspan="4" class="empty-state"><div class="empty-state-icon">🔍</div>No courses found matching your search</td>';
+                    tbody.appendChild(emptyRow);
+                }
+            } else {
+                const noResults = document.getElementById('noResults');
+                if (noResults) noResults.remove();
+            }
+        }
+
+        function downloadSchedule() {
+            alert('📄 Downloading Course Schedule...\n\nYour course schedule would be downloaded as a PDF in production.');
+        }
+
+        function viewTimetable() {
+            alert('📅 Opening Class Timetable...\n\nYour weekly class timetable with timings and venues would be displayed.');
+        }
+
+        function goBack() {
+            alert('Returning to Student Dashboard...');
+        }
+        function goBack() {
+            window.location.href = "studentdash.html";
+        }
+    </script>
+</body>
+
+</html>

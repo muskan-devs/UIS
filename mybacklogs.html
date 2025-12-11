@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Backlogs - University Information System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%);
+            color: white;
+            padding: 1.2rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .back-btn {
+            padding: 0.6rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: #2c2c2c;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header-card {
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .info-text h2 {
+            font-size: 1.8rem;
+            color: #2c2c2c;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-text p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c2c2c;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .backlogs-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .title-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: white;
+        }
+
+        .card-title h3 {
+            font-size: 1.3rem;
+            color: #2c2c2c;
+        }
+
+        .filter-select {
+            padding: 0.6rem 1rem;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #2c2c2c;
+        }
+
+        .no-backlogs {
+            text-align: center;
+            padding: 5rem 2rem;
+        }
+
+        .success-icon {
+            font-size: 6rem;
+            margin-bottom: 1.5rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .success-message {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #28a745;
+            margin-bottom: 1rem;
+        }
+
+        .success-subtext {
+            font-size: 1.1rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .congratulations-card {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+            border-left: 5px solid #28a745;
+        }
+
+        .congrats-text {
+            color: #155724;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #fafafa;
+        }
+
+        th {
+            padding: 1.2rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: #2c2c2c;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #f4e4a1;
+        }
+
+        td {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.95rem;
+        }
+
+        tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .course-code {
+            font-weight: 700;
+            color: #2c2c2c;
+            font-size: 1rem;
+        }
+
+        .course-name {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.2rem;
+        }
+
+        .semester-badge {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            color: #2c2c2c;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+            color: #856404;
+        }
+
+        .status-cleared {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+        }
+
+        .status-active {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+        }
+
+        .reason-text {
+            color: #666;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #2196f3;
+            margin-top: 2rem;
+        }
+
+        .info-box-content {
+            display: flex;
+            align-items: start;
+            gap: 1rem;
+        }
+
+        .info-icon-small {
+            font-size: 1.5rem;
+        }
+
+        .info-text-box {
+            color: #1565c0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.9rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f4e4a1 0%, #e8d67a 100%);
+            color: #2c2c2c;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(244, 228, 161, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .student-info {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .card-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            th,
+            td {
+                padding: 0.8rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-bar">
+        <h2 class="page-title">My Backlogs</h2>
+        <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+    </div>
+    <div class="container">
+        <div class="header-card">
+            <div class="header-content">
+                <div class="student-info">
+                    <div class="info-icon">⚠️</div>
+                    <div class="info-text">
+                        <h2>Academic Backlog Status</h2>
+                        <p>Muskan Choudhary - CS2023090 • B.Tech CSE • 3rd Year</p>
+                    </div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalBacklogs">0</div>
+                        <div class="stat-label">Active Backlogs</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="clearedBacklogs">0</div>
+                        <div class="stat-label">Cleared Backlogs</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalCourses">32</div>
+                        <div class="stat-label">Total Courses</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">8.65</div>
+                        <div class="stat-label">Current CGPA</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="backlogs-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="title-icon">📋</div>
+                    <h3>Backlog Details</h3>
+                </div>
+                <select class="filter-select" id="statusFilter" onchange="filterBacklogs()">
+                    <option value="all">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="cleared">Cleared</option>
+                    <option value="pending">Pending Re-exam</option>
+                </select>
+            </div>
+            <div id="backlogsContent">
+                <!-- Content will be dynamically inserted here -->
+            </div>
+        </div>
+
+        <div class="info-box">
+            <div class="info-box-content">
+                <span class="info-icon-small">ℹ️</span>
+                <div class="info-text-box">
+                    <strong>Note:</strong> Backlogs must be cleared to be eligible for final semester examination.
+                    Students can re-appear for backlog courses during the supplementary examination period. Contact the
+                    academic office for re-examination schedules and procedures.
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons" id="actionButtons">
+            <!-- Buttons will be shown only if there are backlogs -->
+        </div>
+    </div>
+
+    <script>
+        // Set hasBacklogs to true to see the backlog view
+        const hasBacklogs = false;
+
+        const backlogData = [
+            {
+                courseCode: "CS303",
+                courseName: "Advanced Database Systems",
+                semester: "5th Semester",
+                reason: "Failed in End-Semester Exam",
+                status: "active",
+                statusClass: "status-active",
+                statusText: "Active Backlog"
+            },
+            {
+                courseCode: "MA301",
+                courseName: "Probability and Statistics",
+                semester: "4th Semester",
+                reason: "Absent in End-Semester Exam",
+                status: "pending",
+                statusClass: "status-pending",
+                statusText: "Re-exam Pending"
+            }
+        ];
+
+        function renderBacklogs(filtered = backlogData) {
+            const content = document.getElementById('backlogsContent');
+
+            if (!hasBacklogs || filtered.length === 0) {
+                content.innerHTML = `
+                    <div class="no-backlogs">
+                        <div class="success-icon">✅</div>
+                        <div class="success-message">No Backlogs!</div>
+                        <div class="success-subtext">Excellent! You have successfully cleared all your courses.<br>Keep up the great work and maintain your academic performance.</div>
+                        <div class="congratulations-card">
+                            <div class="congrats-text">
+                                <strong>🎉 Congratulations!</strong><br>
+                                You are on track with all your coursework. Continue your excellent academic performance and you'll be eligible for all upcoming examinations and placements without any restrictions.
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('actionButtons').innerHTML = '';
+            } else {
+                content.innerHTML = `
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Course</th>
+                                    <th>Semester</th>
+                                    <th>Reason</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${filtered.map(backlog => `
+                                    <tr>
+                                        <td>
+                                            <div class="course-code">${backlog.courseCode}</div>
+                                            <div class="course-name">${backlog.courseName}</div>
+                                        </td>
+                                        <td><span class="semester-badge">${backlog.semester}</span></td>
+                                        <td class="reason-text">${backlog.reason}</td>
+                                        <td><span class="status-badge ${backlog.statusClass}">${backlog.statusText}</span></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+                document.getElementById('actionButtons').innerHTML = `
+                    <button class="btn btn-primary" onclick="viewReexamSchedule()">📅 View Re-exam Schedule</button>
+                    <button class="btn btn-secondary" onclick="applyForReexam()">✍️ Apply for Re-examination</button>
+                `;
+            }
+        }
+
+        function filterBacklogs() {
+            const filter = document.getElementById('statusFilter').value;
+            if (filter === 'all') {
+                renderBacklogs(backlogData);
+            } else {
+                const filtered = backlogData.filter(b => b.status === filter);
+                renderBacklogs(filtered);
+            }
+        }
+
+        function updateStats() {
+            if (hasBacklogs) {
+                const active = backlogData.filter(b => b.status === 'active').length;
+                document.getElementById('totalBacklogs').textContent = active;
+                document.getElementById('clearedBacklogs').textContent = '0';
+            } else {
+                document.getElementById('totalBacklogs').textContent = '0';
+                document.getElementById('clearedBacklogs').textContent = '0';
+            }
+        }
+
+        function viewReexamSchedule() {
+            alert('📅 Re-examination Schedule\n\nThe supplementary examination schedule would be displayed here.\n\nExam dates:\n• CS303: 15th June 2024\n• MA301: 18th June 2024');
+        }
+
+        function applyForReexam() {
+            alert('✍️ Apply for Re-examination\n\nYou would be redirected to the re-examination application form.');
+        }
+
+        function goBack() {
+            alert('Returning to Student Dashboard...');
+        }
+        function goBack() {
+            window.location.href = "studentdash.html";
+        }
+
+        // Initialize
+        renderBacklogs();
+        updateStats();
+    </script>
+</body>
+
+</html>
