@@ -6,8 +6,8 @@
     <title>Admin Login - University Information System</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; position: relative; }
-        body::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(244, 228, 161, 0.03) 1px, transparent 1px); background-size: 50px 50px; animation: gridMove 20s linear infinite; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%); background-attachment: fixed; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; position: relative; }
+        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(244, 228, 161, 0.03) 1px, transparent 1px); background-size: 50px 50px; animation: gridMove 20s linear infinite; pointer-events: none; }
         @keyframes gridMove { 0% { transform: translate(0, 0); } 100% { transform: translate(50px, 50px); } }
         .login-container { width: 100%; max-width: 500px; position: relative; z-index: 1; }
         .security-badge { text-align: center; margin-bottom: 1rem; }
@@ -174,15 +174,7 @@
             const twoFactor = document.getElementById('twoFactor').checked;
 
             if (adminId && password) {
-                let message = `🛡️ Admin Authentication\n\nAdmin ID: ${adminId}\n`;
-                
-                if (twoFactor) {
-                    message += '\n⚠️ Two-Factor Authentication Required\nA verification code has been sent to your registered device.\n\n';
-                }
-                
-                message += 'Verifying credentials and accessing admin dashboard...\n\nIn production, this would:\n• Verify admin credentials\n• Log access attempt\n• Enable 2FA if selected\n• Redirect to admin control panel';
-                
-                alert(message);
+                // Redirect to admin dashboard
                 window.location.href = "UISadminDash.html";
             }
         }
