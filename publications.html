@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publications Management - University Information System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; min-height: 100vh; }
+        .top-bar { background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%); color: white; padding: 1.2rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .page-title { font-size: 1.8rem; font-weight: 600; }
+        .back-btn { padding: 0.6rem 1.5rem; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; cursor: pointer; font-size: 0.95rem; transition: all 0.3s ease; }
+        .back-btn:hover { background: white; color: #2c2c2c; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-left: 4px solid #f4e4a1; transition: all 0.3s ease; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 25px rgba(0,0,0,0.12); }
+        .stat-icon { width: 45px; height: 45px; background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 1rem; }
+        .stat-value { font-size: 2rem; font-weight: 700; color: #2c2c2c; margin-bottom: 0.3rem; }
+        .stat-label { font-size: 0.9rem; color: #666; }
+        .tab-container { display: flex; gap: 1rem; margin-bottom: 2rem; }
+        .tab-btn { padding: 0.9rem 2rem; background: white; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: all 0.3s ease; font-weight: 500; }
+        .tab-btn:hover { border-color: #f4e4a1; }
+        .tab-btn.active { background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%); border-color: #f4e4a1; color: #2c2c2c; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .form-container { background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); max-width: 900px; }
+        .form-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid #f4e4a1; }
+        .form-icon { width: 50px; height: 50px; background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .form-header h3 { color: #2c2c2c; font-size: 1.5rem; }
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-group label { font-weight: 600; color: #2c2c2c; margin-bottom: 0.5rem; font-size: 0.95rem; }
+        .form-group input, .form-group select, .form-group textarea { padding: 0.9rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease; font-family: inherit; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #f4e4a1; box-shadow: 0 0 0 3px rgba(244, 228, 161, 0.2); }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .form-actions { display: flex; gap: 1rem; justify-content: flex-end; }
+        .btn { padding: 0.9rem 2rem; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: all 0.3s ease; }
+        .btn-primary { background: linear-gradient(135deg, #f4e4a1 0%, #e8d67a 100%); color: #2c2c2c; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(244, 228, 161, 0.4); }
+        .btn-secondary { background: #e0e0e0; color: #2c2c2c; }
+        .btn-secondary:hover { background: #d0d0d0; }
+        .publications-container { display: grid; gap: 1.5rem; }
+        .publication-card { background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: all 0.3s ease; border-left: 5px solid #f4e4a1; }
+        .publication-card:hover { transform: translateY(-3px); box-shadow: 0 6px 25px rgba(0,0,0,0.12); }
+        .pub-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem; gap: 1rem; }
+        .pub-title { flex: 1; }
+        .pub-title h4 { font-size: 1.3rem; color: #2c2c2c; margin-bottom: 0.5rem; line-height: 1.4; }
+        .pub-type { padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
+        .type-journal { background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); color: #155724; }
+        .type-conference { background: linear-gradient(135deg, #cce5ff 0%, #b8daff 100%); color: #004085; }
+        .pub-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
+        .detail-item { display: flex; flex-direction: column; }
+        .detail-label { font-size: 0.85rem; color: #666; margin-bottom: 0.4rem; font-weight: 600; }
+        .detail-value { font-size: 1rem; color: #2c2c2c; font-weight: 500; }
+        .year-badge { display: inline-block; padding: 0.3rem 0.8rem; background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%); color: #2c2c2c; border-radius: 15px; font-size: 0.9rem; font-weight: 700; }
+        .authors-section { padding: 1rem; background: #fafafa; border-radius: 8px; margin-bottom: 1.5rem; }
+        .authors-label { font-size: 0.85rem; color: #666; font-weight: 600; margin-bottom: 0.5rem; }
+        .authors-list { color: #2c2c2c; font-size: 0.95rem; line-height: 1.6; }
+        .pub-actions { display: flex; gap: 0.8rem; justify-content: flex-end; }
+        .action-btn { padding: 0.6rem 1.2rem; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem; transition: all 0.3s ease; font-weight: 500; }
+        .btn-edit { background: #fff9e6; color: #f4a10d; }
+        .btn-edit:hover { background: #f4a10d; color: white; }
+        .btn-delete { background: #ffebee; color: #c62828; }
+        .btn-delete:hover { background: #c62828; color: white; }
+        .search-section { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+        .search-box { flex: 1; min-width: 250px; padding: 0.8rem 1rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.95rem; }
+        .search-box:focus { outline: none; border-color: #f4e4a1; }
+        .filter-select { padding: 0.8rem 1rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.95rem; cursor: pointer; min-width: 180px; }
+        .filter-select:focus { outline: none; border-color: #f4e4a1; }
+        @media (max-width: 768px) { .container { padding: 1rem; } .form-grid { grid-template-columns: 1fr; } .tab-container { flex-direction: column; } .pub-header { flex-direction: column; } .search-section { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <h2 class="page-title">Publications Management</h2>
+        <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+    </div>
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-icon">📄</div><div class="stat-value" id="totalPubs">0</div><div class="stat-label">Total Publications</div></div>
+            <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-value" id="journalPubs">0</div><div class="stat-label">Journal Papers</div></div>
+            <div class="stat-card"><div class="stat-icon">🎤</div><div class="stat-value" id="confPubs">0</div><div class="stat-label">Conference Papers</div></div>
+            <div class="stat-card"><div class="stat-icon">📅</div><div class="stat-value" id="yearPubs">0</div><div class="stat-label">This Year</div></div>
+        </div>
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="switchTab('add')">➕ Add Publication</button>
+            <button class="tab-btn" onclick="switchTab('view')">📋 View Publications</button>
+        </div>
+        <div id="add-tab" class="tab-content active">
+            <div class="form-container">
+                <div class="form-header"><div class="form-icon">📄</div><h3>Add New Publication</h3></div>
+                <form id="pubForm">
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="title">Publication Title *</label>
+                            <input type="text" id="title" required placeholder="Enter publication title">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="authors">Authors *</label>
+                            <textarea id="authors" required placeholder="Enter author names (comma separated)"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="type">Publication Type *</label>
+                            <select id="type" required>
+                                <option value="">Select Type</option>
+                                <option value="Journal">Journal</option>
+                                <option value="Conference">Conference</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="venue">Conference/Journal Name *</label>
+                            <input type="text" id="venue" required placeholder="Enter conference or journal name">
+                        </div>
+                        <div class="form-group">
+                            <label for="year">Publication Year *</label>
+                            <input type="number" id="year" required min="1900" max="2100" placeholder="e.g., 2024">
+                        </div>
+                        <div class="form-group">
+                            <label for="doi">DOI / ISBN (Optional)</label>
+                            <input type="text" id="doi" placeholder="Digital Object Identifier">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="abstract">Abstract / Summary (Optional)</label>
+                            <textarea id="abstract" placeholder="Brief description of the publication"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset</button>
+                        <button type="submit" class="btn btn-primary">Add Publication</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="view-tab" class="tab-content">
+            <div class="search-section">
+                <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search by title, authors, or venue..." onkeyup="filterPubs()">
+                <select class="filter-select" id="typeFilter" onchange="filterPubs()">
+                    <option value="all">All Types</option>
+                    <option value="Journal">Journal</option>
+                    <option value="Conference">Conference</option>
+                </select>
+                <select class="filter-select" id="yearFilter" onchange="filterPubs()">
+                    <option value="all">All Years</option>
+                </select>
+            </div>
+            <div class="publications-container" id="pubsList"></div>
+        </div>
+    </div>
+    <script>
+        let pubs = [
+            { id: 1, title: 'Machine Learning Approaches for Predictive Healthcare Analytics', authors: 'Dr. Rajesh Kumar, Dr. Priya Sharma, Prof. Amit Singh', type: 'Journal', venue: 'IEEE Transactions on Medical Imaging', year: 2024, doi: '10.1109/TMI.2024.001', abstract: 'Novel ML techniques for disease prediction' },
+            { id: 2, title: 'Optimization Techniques for Renewable Energy Systems', authors: 'Dr. Meena Patel, Dr. Suresh Reddy', type: 'Conference', venue: 'International Conference on Sustainable Energy', year: 2024, doi: '', abstract: 'Optimizing solar and wind energy systems' },
+            { id: 3, title: 'Nanomaterials in Water Purification: A Comprehensive Review', authors: 'Dr. Anita Desai, Dr. Vikram Joshi', type: 'Journal', venue: 'Journal of Environmental Science', year: 2023, doi: '10.1016/JES.2023.045', abstract: 'Review of nanomaterial applications' }
+        ];
+        
+        let nextId = 4;
+
+        function updateStats() {
+            const currentYear = new Date().getFullYear();
+            document.getElementById('totalPubs').textContent = pubs.length;
+            document.getElementById('journalPubs').textContent = pubs.filter(p => p.type === 'Journal').length;
+            document.getElementById('confPubs').textContent = pubs.filter(p => p.type === 'Conference').length;
+            document.getElementById('yearPubs').textContent = pubs.filter(p => p.year === currentYear).length;
+            
+            const years = [...new Set(pubs.map(p => p.year))].sort((a, b) => b - a);
+            const yearFilter = document.getElementById('yearFilter');
+            yearFilter.innerHTML = '<option value="all">All Years</option>' + 
+                years.map(y => `<option value="${y}">${y}</option>`).join('');
+        }
+
+        function renderPubs(filteredPubs = pubs) {
+            const container = document.getElementById('pubsList');
+            if (!filteredPubs.length) {
+                container.innerHTML = '<div style="text-align:center;padding:3rem;color:#999;background:white;border-radius:12px">No publications found</div>';
+                return;
+            }
+            
+            container.innerHTML = filteredPubs.sort((a, b) => b.year - a.year).map(p => `
+                <div class="publication-card">
+                    <div class="pub-header">
+                        <div class="pub-title">
+                            <h4>${p.title}</h4>
+                        </div>
+                        <span class="pub-type type-${p.type.toLowerCase()}">${p.type}</span>
+                    </div>
+                    <div class="authors-section">
+                        <div class="authors-label">Authors:</div>
+                        <div class="authors-list">${p.authors}</div>
+                    </div>
+                    <div class="pub-details">
+                        <div class="detail-item">
+                            <span class="detail-label">${p.type === 'Journal' ? 'Journal' : 'Conference'}</span>
+                            <span class="detail-value">${p.venue}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Year</span>
+                            <span class="year-badge">${p.year}</span>
+                        </div>
+                        ${p.doi ? `<div class="detail-item"><span class="detail-label">DOI</span><span class="detail-value">${p.doi}</span></div>` : ''}
+                    </div>
+                    ${p.abstract ? `<div class="authors-section"><div class="authors-label">Abstract:</div><div class="authors-list">${p.abstract}</div></div>` : ''}
+                    <div class="pub-actions">
+                        <button class="action-btn btn-edit" onclick="editPub(${p.id})">Edit</button>
+                        <button class="action-btn btn-delete" onclick="deletePub(${p.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterPubs() {
+            const search = document.getElementById('searchBox').value.toLowerCase();
+            const typeFilter = document.getElementById('typeFilter').value;
+            const yearFilter = document.getElementById('yearFilter').value;
+            
+            let filtered = pubs.filter(p => 
+                (p.title.toLowerCase().includes(search) || 
+                 p.authors.toLowerCase().includes(search) || 
+                 p.venue.toLowerCase().includes(search)) &&
+                (typeFilter === 'all' || p.type === typeFilter) &&
+                (yearFilter === 'all' || p.year === parseInt(yearFilter))
+            );
+            
+            renderPubs(filtered);
+        }
+
+        document.getElementById('pubForm').onsubmit = e => {
+            e.preventDefault();
+            const pub = {
+                id: nextId++,
+                title: document.getElementById('title').value,
+                authors: document.getElementById('authors').value,
+                type: document.getElementById('type').value,
+                venue: document.getElementById('venue').value,
+                year: parseInt(document.getElementById('year').value),
+                doi: document.getElementById('doi').value,
+                abstract: document.getElementById('abstract').value
+            };
+            pubs.push(pub);
+            alert('✅ Publication added successfully!');
+            resetForm();
+            switchTab('view');
+        };
+
+        function resetForm() {
+            document.getElementById('pubForm').reset();
+        }
+
+        function editPub(id) {
+            const p = pubs.find(x => x.id === id);
+            if (confirm(`Edit: ${p.title}?`)) {
+                document.getElementById('title').value = p.title;
+                document.getElementById('authors').value = p.authors;
+                document.getElementById('type').value = p.type;
+                document.getElementById('venue').value = p.venue;
+                document.getElementById('year').value = p.year;
+                document.getElementById('doi').value = p.doi;
+                document.getElementById('abstract').value = p.abstract;
+                pubs = pubs.filter(x => x.id !== id);
+                switchTab('add');
+            }
+        }
+
+        function deletePub(id) {
+            const p = pubs.find(x => x.id === id);
+            if (confirm(`Delete: ${p.title}?`)) {
+                pubs = pubs.filter(x => x.id !== id);
+                renderPubs();
+                updateStats();
+                alert('✅ Publication deleted!');
+            }
+        }
+
+        function switchTab(t) {
+            ['add', 'view'].forEach((x, i) => {
+                document.getElementById(x + '-tab').classList.toggle('active', x === t);
+                document.querySelectorAll('.tab-btn')[i].classList.toggle('active', x === t);
+            });
+            if (t === 'view') {
+                renderPubs();
+                updateStats();
+            }
+        }
+
+        function goBack() {
+            alert('Returning to Admin Dashboard...');
+        }
+        function goBack() {
+    window.location.href = "UISadmindash.html";
+}
+
+        renderPubs();
+        updateStats();
+    </script>
+</body>
+</html>

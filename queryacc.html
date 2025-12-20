@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Query Accounts - University Information System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%);
+            color: white;
+            padding: 1.2rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .back-btn {
+            padding: 0.6rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: #2c2c2c;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .filter-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .filter-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .filter-header h3 {
+            color: #2c2c2c;
+            font-size: 1.4rem;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #2c2c2c;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group select,
+        .form-group input {
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #f4e4a1;
+            box-shadow: 0 0 0 3px rgba(244, 228, 161, 0.2);
+        }
+
+        .query-btn {
+            padding: 0.8rem 2.5rem;
+            background: linear-gradient(135deg, #f4e4a1 0%, #e8d67a 100%);
+            color: #2c2c2c;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            align-self: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        .query-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(244, 228, 161, 0.4);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+        }
+
+        .summary-card.income::before {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        }
+
+        .summary-card.expenditure::before {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        }
+
+        .summary-card.balance::before {
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .summary-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-label {
+            font-size: 1rem;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.8rem;
+        }
+
+        .summary-value {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #2c2c2c;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-subtext {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .details-section {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #f4e4a1;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .section-title h3 {
+            color: #2c2c2c;
+            font-size: 1.4rem;
+        }
+
+        .breakdown-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .breakdown-card {
+            background: #fafafa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #f4e4a1;
+            transition: all 0.3s ease;
+        }
+
+        .breakdown-card:hover {
+            background: #f5f5f5;
+            transform: translateX(5px);
+        }
+
+        .breakdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .breakdown-category {
+            font-weight: 700;
+            color: #2c2c2c;
+            font-size: 1rem;
+        }
+
+        .breakdown-amount {
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        .amount-income {
+            color: #28a745;
+        }
+
+        .amount-expenditure {
+            color: #dc3545;
+        }
+
+        .breakdown-percentage {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .transaction-table thead {
+            background: #fafafa;
+        }
+
+        .transaction-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #2c2c2c;
+            border-bottom: 2px solid #f4e4a1;
+            font-size: 0.9rem;
+        }
+
+        .transaction-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.9rem;
+        }
+
+        .transaction-table tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .transaction-type {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .type-income {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+        }
+
+        .type-expenditure {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+        }
+
+        .chart-container {
+            background: #fafafa;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c2c2c;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .bar-label {
+            min-width: 120px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .bar-container {
+            flex: 1;
+            background: #e0e0e0;
+            height: 35px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            font-weight: 700;
+            color: #2c2c2c;
+            font-size: 0.85rem;
+            transition: width 1s ease;
+        }
+
+        .export-btn {
+            padding: 0.7rem 1.5rem;
+            background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .breakdown-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-bar">
+        <h2 class="page-title">Query Accounts Information</h2>
+        <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+    </div>
+    <div class="container">
+        <div class="filter-section">
+            <div class="filter-header">
+                <div class="filter-icon">🔍</div>
+                <h3>Query Filters</h3>
+            </div>
+            <div class="filter-grid">
+                <div class="form-group">
+                    <label for="timeRange">Time Period</label>
+                    <select id="timeRange" onchange="updateQuery()">
+                        <option value="current">Current Academic Year</option>
+                        <option value="month">Current Month</option>
+                        <option value="quarter">Current Quarter</option>
+                        <option value="ytd">Year to Date</option>
+                        <option value="all">All Time</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" onchange="updateQuery()">
+                        <option value="all">All Categories</option>
+                        <option value="income">Income Only</option>
+                        <option value="expenditure">Expenditure Only</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dateFrom">From Date</label>
+                    <input type="date" id="dateFrom" onchange="updateQuery()">
+                </div>
+                <div class="form-group">
+                    <label for="dateTo">To Date</label>
+                    <input type="date" id="dateTo" onchange="updateQuery()">
+                </div>
+            </div>
+            <button class="query-btn" onclick="runQuery()">🔎 Run Query</button>
+        </div>
+        <div class="summary-grid">
+            <div class="summary-card income">
+                <div class="summary-icon">💰</div>
+                <div class="summary-label">Total Income</div>
+                <div class="summary-value">₹<span id="totalIncome">52,50,000</span></div>
+                <div class="summary-subtext">All revenue sources</div>
+            </div>
+            <div class="summary-card expenditure">
+                <div class="summary-icon">💸</div>
+                <div class="summary-label">Total Expenditure</div>
+                <div class="summary-value">₹<span id="totalExpenditure">10,35,000</span></div>
+                <div class="summary-subtext">All expenses</div>
+            </div>
+            <div class="summary-card balance">
+                <div class="summary-icon">📊</div>
+                <div class="summary-label">Current Balance</div>
+                <div class="summary-value">₹<span id="balance">42,15,000</span></div>
+                <div class="summary-subtext" id="balanceStatus">Surplus</div>
+            </div>
+        </div>
+        <div class="details-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <div class="section-icon">📈</div>
+                    <h3>Income Breakdown</h3>
+                </div>
+                <button class="export-btn" onclick="exportReport()">📄 Export Report</button>
+            </div>
+            <div class="breakdown-grid" id="incomeBreakdown">
+                <div class="breakdown-card">
+                    <div class="breakdown-header">
+                        <span class="breakdown-category">Yearly Grant</span>
+                        <span class="breakdown-amount amount-income">₹50,00,000</span>
+                    </div>
+                    <div class="breakdown-percentage">95.24% of total income</div>
+                </div>
+                <div class="breakdown-card">
+                    <div class="breakdown-header">
+                        <span class="breakdown-category">Consultancy Fund</span>
+                        <span class="breakdown-amount amount-income">₹2,50,000</span>
+                    </div>
+                    <div class="breakdown-percentage">4.76% of total income</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">Income Distribution</div>
+                <div class="bar-chart">
+                    <div class="bar-row">
+                        <div class="bar-label">Yearly Grant</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: 95.24%">₹50,00,000</div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">Consultancy</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: 4.76%">₹2,50,000</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="details-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <div class="section-icon">📉</div>
+                    <h3>Expenditure Breakdown</h3>
+                </div>
+            </div>
+            <div class="breakdown-grid" id="expenditureBreakdown">
+                <div class="breakdown-card">
+                    <div class="breakdown-header">
+                        <span class="breakdown-category">Equipment</span>
+                        <span class="breakdown-amount amount-expenditure">₹4,50,000</span>
+                    </div>
+                    <div class="breakdown-percentage">43.48% of total expenditure</div>
+                </div>
+                <div class="breakdown-card">
+                    <div class="breakdown-header">
+                        <span class="breakdown-category">Books</span>
+                        <span class="breakdown-amount amount-expenditure">₹3,25,000</span>
+                    </div>
+                    <div class="breakdown-percentage">31.40% of total expenditure</div>
+                </div>
+                <div class="breakdown-card">
+                    <div class="breakdown-header">
+                        <span class="breakdown-category">Stationery</span>
+                        <span class="breakdown-amount amount-expenditure">₹1,35,000</span>
+                    </div>
+                    <div class="breakdown-percentage">13.04% of total expenditure</div>
+                </div>
+                <div class="breakdown-card">
+                    <div class="breakdown-header">
+                        <span class="breakdown-category">Others</span>
+                        <span class="breakdown-amount amount-expenditure">₹1,25,000</span>
+                    </div>
+                    <div class="breakdown-percentage">12.08% of total expenditure</div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">Expenditure Distribution</div>
+                <div class="bar-chart">
+                    <div class="bar-row">
+                        <div class="bar-label">Equipment</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: 43.48%">₹4,50,000</div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">Books</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: 31.40%">₹3,25,000</div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">Stationery</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: 13.04%">₹1,35,000</div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">Others</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: 12.08%">₹1,25,000</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="details-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <div class="section-icon">📋</div>
+                    <h3>Recent Transactions</h3>
+                </div>
+            </div>
+            <table class="transaction-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionTable">
+                    <tr>
+                        <td>15 Jan 2024</td>
+                        <td><span class="transaction-type type-income">Income</span></td>
+                        <td>Yearly Grant</td>
+                        <td>Annual UGC Grant</td>
+                        <td class="amount-income">₹50,00,000</td>
+                    </tr>
+                    <tr>
+                        <td>10 Feb 2024</td>
+                        <td><span class="transaction-type type-income">Income</span></td>
+                        <td>Consultancy</td>
+                        <td>Tech Corp AI Project</td>
+                        <td class="amount-income">₹2,50,000</td>
+                    </tr>
+                    <tr>
+                        <td>20 Feb 2024</td>
+                        <td><span class="transaction-type type-expenditure">Expenditure</span></td>
+                        <td>Equipment</td>
+                        <td>Laboratory Equipment Purchase</td>
+                        <td class="amount-expenditure">₹4,50,000</td>
+                    </tr>
+                    <tr>
+                        <td>05 Mar 2024</td>
+                        <td><span class="transaction-type type-expenditure">Expenditure</span></td>
+                        <td>Books</td>
+                        <td>Library Stock Update - 1500 Books</td>
+                        <td class="amount-expenditure">₹3,25,000</td>
+                    </tr>
+                    <tr>
+                        <td>10 Mar 2024</td>
+                        <td><span class="transaction-type type-expenditure">Expenditure</span></td>
+                        <td>Stationery</td>
+                        <td>Office Supplies Q1</td>
+                        <td class="amount-expenditure">₹1,35,000</td>
+                    </tr>
+                    <tr>
+                        <td>15 Mar 2024</td>
+                        <td><span class="transaction-type type-expenditure">Expenditure</span></td>
+                        <td>Others</td>
+                        <td>Building Maintenance</td>
+                        <td class="amount-expenditure">₹1,25,000</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        function updateQuery() {
+            console.log('Filters updated');
+        }
+
+        function runQuery() {
+            alert('Query executed successfully!\n\nShowing results for selected filters.');
+        }
+
+        function exportReport() {
+            alert('📄 Exporting Account Report...\n\nReport would be downloaded as PDF/Excel in production.');
+        }
+
+        function goBack() {
+            alert('Returning to Admin Dashboard...');
+        }
+        function goBack() {
+            window.location.href = "UISadmindash.html";
+        }
+    </script>
+</body>
+
+</html>

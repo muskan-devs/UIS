@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - University Information System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #2c2c2c 0%, #3a3a3a 100%);
+            color: white;
+            padding: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            background: #1a1a1a;
+            border-bottom: 2px solid #f4e4a1;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .sidebar-header p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .user-info {
+            padding: 1.5rem;
+            background: rgba(244, 228, 161, 0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .user-role {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .nav-menu {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            padding: 0.9rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .nav-item:hover {
+            background: rgba(244, 228, 161, 0.15);
+            border-left-color: #f4e4a1;
+        }
+
+        .nav-item.active {
+            background: rgba(244, 228, 161, 0.2);
+            border-left-color: #f4e4a1;
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
+            background: white;
+            padding: 1.2rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            color: #2c2c2c;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .notification-btn {
+            width: 40px;
+            height: 40px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .notification-btn:hover {
+            background: #f4e4a1;
+        }
+
+        .logout-btn {
+            padding: 0.6rem 1.5rem;
+            background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .dashboard-content {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            border-left: 4px solid #f4e4a1;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c2c2c;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .module-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.12);
+            border-color: #f4e4a1;
+        }
+
+        .module-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .module-title {
+            font-size: 1.3rem;
+            color: #2c2c2c;
+            margin-bottom: 0.6rem;
+            font-weight: 600;
+        }
+
+        .module-description {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #2c2c2c;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid #f4e4a1;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .sidebar-header h1,
+            .sidebar-header p,
+            .user-info,
+            .nav-item span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+            }
+
+            .nav-item {
+                justify-content: center;
+            }
+
+            .top-bar {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 1.3rem;
+            }
+
+            .stats-grid,
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1>🎓 UIS Admin</h1>
+            <p>Control Panel</p>
+        </div>
+
+        <div class="user-info">
+            <div class="user-avatar">👤</div>
+            <div class="user-name">Admin User</div>
+            <div class="user-role">System Administrator</div>
+        </div>
+
+        <nav class="nav-menu">
+            <div class="nav-item" onclick="goToPage('UISadminDash.html')">
+
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item" onclick="goToPage('studentmanage.html')">
+
+                <span class="nav-icon">👥</span>
+                <span>Manage Students</span>
+            </div>
+            <div class="nav-item" onclick="goToPage('course.html')">
+
+                <span class="nav-icon">📚</span>
+                <span>Course Registration</span>
+            </div>
+           <div class="nav-item" onclick="goToPage('grade.html')">
+                <span class="nav-icon">📝</span>
+                <span>Grade Entry</span>
+            </div>
+            <div class="nav-item" onclick="goToPage('inventory.html')">
+                <span class="nav-icon">📦</span>
+                <span>Inventory</span>
+            </div>
+           <div class="nav-item" onclick="goToPage('accounts.html')">
+                <span class="nav-icon">💰</span>
+                <span>Accounts</span>
+            </div>
+            <div class="nav-item" onclick="goToPage('research.html')">
+                <span class="nav-icon">🔬</span>
+                <span>Research Projects</span>
+            </div>
+            <div class="nav-item" onclick="goToPage('publications.html')">
+                <span class="nav-icon">📄</span>
+                <span>Publications</span>
+            </div>
+            <div class="nav-item" onclick="goToPage('queryst.html')">
+                <span class="nav-icon">🔍</span>
+                <span>Query Student</span>
+            </div>
+            <div class="nav-item" onclick="goToPage('queryacc.html')">
+                <span class="nav-icon">💳</span>
+                <span>Query Accounts</span>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="top-bar">
+            <h2 class="page-title">Dashboard Overview</h2>
+            <div class="top-actions">
+                <button class="notification-btn" onclick="showNotifications()">🔔</button>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">👥</div>
+                    </div>
+                    <div class="stat-value">2,847</div>
+                    <div class="stat-label">Total Students</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">📚</div>
+                    </div>
+                    <div class="stat-value">156</div>
+                    <div class="stat-label">Active Courses</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">🔬</div>
+                    </div>
+                    <div class="stat-value">43</div>
+                    <div class="stat-label">Research Projects</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">📄</div>
+                    </div>
+                    <div class="stat-value">128</div>
+                    <div class="stat-label">Publications</div>
+                </div>
+            </div>
+
+            <h3 class="section-title">Management Modules</h3>
+
+            <div class="modules-grid">
+                <div class="module-card" onclick="openModule('students')">
+                    <div class="module-icon">👥</div>
+                    <div class="module-title">Manage Students</div>
+                    <div class="module-description">Add, edit, and manage student records, enrollment status, and personal information.</div>
+                </div>
+
+                <div class="module-card" onclick="openModule('courses')">
+                    <div class="module-icon">📚</div>
+                    <div class="module-title">Course Registration</div>
+                    <div class="module-description">Handle course enrollments, manage class schedules, and process registration requests.</div>
+                </div>
+
+                <div class="module-card" onclick="openModule('grades')">
+                    <div class="module-icon">📝</div>
+                    <div class="module-title">Grade Entry</div>
+                    <div class="module-description">Enter and update student grades, manage assessment records, and generate transcripts.</div>
+                </div>
+
+                <div class="module-card" onclick="openModule('inventory')">
+                    <div class="module-icon">📦</div>
+                    <div class="module-title">Inventory</div>
+                    <div class="module-description">Track university assets, equipment, and supplies across departments and facilities.</div>
+                </div>
+
+                <div class="module-card" onclick="openModule('accounts')">
+                    <div class="module-icon">💰</div>
+                    <div class="module-title">Accounts</div>
+                    <div class="module-description">Manage financial records, tuition fees, payments, and generate financial reports.</div>
+                </div>
+
+                <div class="module-card" onclick="openModule('research')">
+                    <div class="module-icon">🔬</div>
+                    <div class="module-title">Research Projects</div>
+                    <div class="module-description">Oversee research initiatives, funding, progress tracking, and project documentation.</div>
+                </div>
+
+                <div class="module-card" onclick="openModule('publications')">
+                    <div class="module-icon">📄</div>
+                    <div class="module-title">Publications</div>
+                    <div class="module-description">Manage academic publications, research papers, and institutional documentation.</div>
+                </div>
+
+                <div class="module-card" onclick="openModule('query-student')">
+                    <div class="module-icon">🔍</div>
+                    <div class="module-title">Query Student</div>
+                    <div class="module-description">Search and retrieve detailed student information, academic history, and records.</div>
+                </div>
+
+                <div class="module-card" onclick="openModule('query-accounts')">
+                    <div class="module-icon">💳</div>
+                    <div class="module-title">Query Accounts</div>
+                    <div class="module-description">Search financial records, payment history, and account balances for students and departments.</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function switchView(view) {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+            event.target.closest('.nav-item').classList.add('active');
+            
+            const pageTitle = document.querySelector('.page-title');
+            const titles = {
+                'dashboard': 'Dashboard Overview',
+                'students': 'Manage Students',
+                'courses': 'Course Registration',
+                'grades': 'Grade Entry',
+                'inventory': 'Inventory Management',
+                'accounts': 'Accounts Management',
+                'research': 'Research Projects',
+                'publications': 'Publications',
+                'query-student': 'Query Student Records',
+                'query-accounts': 'Query Account Information'
+            };
+            pageTitle.textContent = titles[view] || 'Dashboard';
+        }
+
+        function openModule(module) {
+            alert(`Opening ${module.replace('-', ' ').toUpperCase()} module...\n\nIn production, this would navigate to the ${module} management page.`);
+        }
+
+        function showNotifications() {
+            alert('Notifications:\n\n• 5 new student registrations pending approval\n• 3 grade submissions awaiting verification\n• System backup completed successfully');
+        }
+
+        function logout() {
+            if(confirm('Are you sure you want to logout?')) {
+                alert('Logging out...\n\nRedirecting to login page.');
+                // window.location.href = '/login.html';
+            }
+        }
+        function switchView(view) {
+    window.location.href = view + ".html";
+}
+
+function openModule(module) {
+    window.location.href = module + ".html";
+}
+
+function logout() {
+    if(confirm('Are you sure you want to logout?')) {
+        window.location.href = "index.html";
+    }
+}
+function goToPage(page) {
+    window.location.href = page;
+}
+
+function openModule(module) {
+    const pages = {
+        'students': 'studentmanage.html',
+        'courses': 'course.html',
+        'grades': 'grade.html',
+        'inventory': 'inventory.html',
+        'accounts': 'accounts.html',
+        'research': 'research.html',
+        'publications': 'publications.html',
+        'query-student': 'queryst.html',
+        'query-accounts': 'queryacc.html'
+    };
+    
+    window.location.href = pages[module];
+}
+
+    </script>
+</body>
+</html>

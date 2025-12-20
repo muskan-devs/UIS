@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Results - University Information System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); min-height: 100vh; }
+        .top-bar { background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%); color: white; padding: 1.2rem 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .page-title { font-size: 1.8rem; font-weight: 600; }
+        .back-btn { padding: 0.6rem 1.5rem; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; cursor: pointer; font-size: 0.95rem; transition: all 0.3s ease; }
+        .back-btn:hover { background: white; color: #2c2c2c; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .header-card { background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%); padding: 2.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 2rem; }
+        .header-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; }
+        .student-info h2 { font-size: 1.8rem; color: #2c2c2c; margin-bottom: 0.5rem; }
+        .student-info p { color: #666; font-size: 1rem; }
+        .cgpa-display { text-align: center; background: rgba(255,255,255,0.6); padding: 1.5rem 2.5rem; border-radius: 12px; }
+        .cgpa-label { font-size: 0.9rem; color: #666; font-weight: 600; text-transform: uppercase; margin-bottom: 0.5rem; }
+        .cgpa-value { font-size: 3rem; font-weight: 700; color: #2c2c2c; }
+        .semester-selector { background: white; padding: 1.5rem 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+        .selector-label { font-size: 1rem; font-weight: 600; color: #2c2c2c; }
+        .semester-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .semester-tab { padding: 0.8rem 1.5rem; background: #f5f5f5; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; font-weight: 600; color: #666; transition: all 0.3s ease; }
+        .semester-tab:hover { border-color: #f4e4a1; background: #fafafa; }
+        .semester-tab.active { background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%); border-color: #f4e4a1; color: #2c2c2c; }
+        .result-card { background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden; margin-bottom: 2rem; }
+        .card-header { background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%); padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .card-title { display: flex; align-items: center; gap: 1rem; }
+        .title-icon { width: 45px; height: 45px; background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: white; }
+        .card-title h3 { font-size: 1.3rem; color: #2c2c2c; }
+        .semester-gpa { text-align: center; background: rgba(255,255,255,0.6); padding: 0.8rem 1.5rem; border-radius: 8px; }
+        .gpa-label { font-size: 0.8rem; color: #666; }
+        .gpa-value { font-size: 1.8rem; font-weight: 700; color: #2c2c2c; }
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #fafafa; }
+        th { padding: 1rem 1.5rem; text-align: left; font-weight: 600; color: #2c2c2c; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #f4e4a1; }
+        td { padding: 1rem 1.5rem; border-bottom: 1px solid #e0e0e0; font-size: 0.95rem; }
+        tbody tr { transition: all 0.2s ease; }
+        tbody tr:hover { background: #fafafa; }
+        .course-code { font-weight: 700; color: #2c2c2c; }
+        .course-name { color: #666; }
+        .grade-badge { display: inline-block; padding: 0.4rem 0.9rem; border-radius: 20px; font-weight: 700; font-size: 0.9rem; min-width: 50px; text-align: center; }
+        .grade-O { background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); color: #155724; }
+        .grade-A { background: linear-gradient(135deg, #cce5ff 0%, #b8daff 100%); color: #004085; }
+        .grade-B { background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%); color: #856404; }
+        .grade-C { background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); color: #721c24; }
+        .credits-info { color: #666; font-weight: 600; }
+        .summary-section { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-top: 2rem; }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+        .summary-item { background: #fafafa; padding: 1.5rem; border-radius: 10px; text-align: center; border-left: 4px solid #f4e4a1; }
+        .summary-value { font-size: 2rem; font-weight: 700; color: #2c2c2c; margin-bottom: 0.3rem; }
+        .summary-label { font-size: 0.85rem; color: #666; font-weight: 600; text-transform: uppercase; }
+        .action-buttons { display: flex; gap: 1rem; margin-top: 2rem; justify-content: center; flex-wrap: wrap; }
+        .btn { padding: 0.9rem 2rem; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 600; transition: all 0.3s ease; }
+        .btn-primary { background: linear-gradient(135deg, #f4e4a1 0%, #e8d67a 100%); color: #2c2c2c; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(244, 228, 161, 0.4); }
+        .btn-secondary { background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%); color: white; }
+        .btn-secondary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        @media (max-width: 768px) { .container { padding: 1rem; } .header-content { flex-direction: column; } .semester-selector { flex-direction: column; align-items: stretch; } .semester-tabs { flex-direction: column; } .summary-grid { grid-template-columns: 1fr; } .action-buttons { flex-direction: column; } th, td { padding: 0.8rem; font-size: 0.85rem; } }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <h2 class="page-title">My Results</h2>
+        <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+    </div>
+    <div class="container">
+        <div class="header-card">
+            <div class="header-content">
+                <div class="student-info">
+                    <h2>Muskan Choudhary - CS2023090</h2>
+                    <p>B.Tech Computer Science Engineering • 3rd Year</p>
+                </div>
+                <div class="cgpa-display">
+                    <div class="cgpa-label">Cumulative CGPA</div>
+                    <div class="cgpa-value">8.65</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="semester-selector">
+            <span class="selector-label">📚 Select Semester:</span>
+            <div class="semester-tabs">
+                <button class="semester-tab" onclick="showSemester(1)">Semester 1</button>
+                <button class="semester-tab" onclick="showSemester(2)">Semester 2</button>
+                <button class="semester-tab" onclick="showSemester(3)">Semester 3</button>
+                <button class="semester-tab" onclick="showSemester(4)">Semester 4</button>
+                <button class="semester-tab active" onclick="showSemester(5)">Semester 5</button>
+            </div>
+        </div>
+
+        <div class="result-card" id="resultCard">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="title-icon">📝</div>
+                    <h3 id="semesterTitle">Semester 5 Results - Academic Year 2025-26</h3>
+                </div>
+                <div class="semester-gpa">
+                    <div class="gpa-label">Semester GPA</div>
+                    <div class="gpa-value" id="semesterGPA">8.75</div>
+                </div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Course Code</th>
+                            <th>Course Name</th>
+                            <th>Credits</th>
+                            <th>Marks Obtained</th>
+                            <th>Total Marks</th>
+                            <th>Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTableBody">
+                        <tr>
+                            <td class="course-code">CS501</td>
+                            <td class="course-name">Software Engineering</td>
+                            <td class="credits-info">3</td>
+                            <td>88</td>
+                            <td>100</td>
+                            <td><span class="grade-badge grade-A">A+</span></td>
+                        </tr>
+                        <tr>
+                            <td class="course-code">CS502</td>
+                            <td class="course-name">Operating System</td>
+                            <td class="credits-info">3</td>
+                            <td>82</td>
+                            <td>100</td>
+                            <td><span class="grade-badge grade-A">A</span></td>
+                        </tr>
+                        <tr>
+                            <td class="course-code">CS503</td>
+                            <td class="course-name">Object Oriented Programming</td>
+                            <td class="credits-info">3</td>
+                            <td>91</td>
+                            <td>100</td>
+                            <td><span class="grade-badge grade-O">O</span></td>
+                        </tr>
+                        <tr>
+                            <td class="course-code">CS504</td>
+                            <td class="course-name">Compiler Design</td>
+                            <td class="credits-info">3</td>
+                            <td>85</td>
+                            <td>100</td>
+                            <td><span class="grade-badge grade-A">A+</span></td>
+                        </tr>
+                        <tr>
+                            <td class="course-code">CS505</td>
+                            <td class="course-name">Artificial Intelligence</td>
+                            <td class="credits-info">3</td>
+                            <td>79</td>
+                            <td>100</td>
+                            <td><span class="grade-badge grade-A">A</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="summary-section">
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-value" id="totalCredits">15</div>
+                    <div class="summary-label">Total Credits</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" id="creditsEarned">15</div>
+                    <div class="summary-label">Credits Earned</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" id="totalMarks">425</div>
+                    <div class="summary-label">Total Marks Obtained</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" id="percentage">85%</div>
+                    <div class="summary-label">Percentage</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="downloadMarksheet()">📄 Download Marksheet</button>
+            <button class="btn btn-secondary" onclick="downloadTranscript()">📋 Download Transcript</button>
+        </div>
+    </div>
+
+    <script>
+        const semesterData = {
+            1: {
+                title: "Semester 1 Results - Academic Year 2023-24",
+                gpa: "8.20",
+                courses: [
+                    { code: "CS101", name: "Programming Fundamentals", credits: 4, marks: 82, total: 100, grade: "A", gradeClass: "grade-A" },
+                    { code: "MA101", name: "Engineering Mathematics I", credits: 4, marks: 78, total: 100, grade: "A", gradeClass: "grade-A" },
+                    { code: "PH101", name: "Engineering Physics", credits: 3, marks: 85, total: 100, grade: "A+", gradeClass: "grade-A" },
+                    { code: "EE101", name: "Basic Electrical Engineering", credits: 3, marks: 80, total: 100, grade: "A", gradeClass: "grade-A" }
+                ]
+            },
+            2: {
+                title: "Semester 2 Results - Academic Year 2023-24",
+                gpa: "8.45",
+                courses: [
+                    { code: "CS102", name: "Problem Solving with C Language", credits: 4, marks: 88, total: 100, grade: "A+", gradeClass: "grade-A" },
+                    { code: "MA102", name: "Engineering Mathematics II", credits: 4, marks: 81, total: 100, grade: "A", gradeClass: "grade-A" },
+                    { code: "CH101", name: "Engineering Chemistry", credits: 3, marks: 86, total: 100, grade: "A+", gradeClass: "grade-A" },
+                    { code: "ME101", name: "Engineering Mechanics", credits: 3, marks: 83, total: 100, grade: "A", gradeClass: "grade-A" }
+                ]
+            },
+            3: {
+                title: "Semester 3 Results - Academic Year 2024-25",
+                gpa: "8.60",
+                courses: [
+                    { code: "CS201", name: "Data Structures & Algorithm", credits: 4, marks: 92, total: 100, grade: "O", gradeClass: "grade-O" },
+                    { code: "CS202", name: "Computer Organization", credits: 3, marks: 84, total: 100, grade: "A", gradeClass: "grade-A" },
+                    { code: "CS203", name: "Formal Language & Automata Theory", credits: 3, marks: 87, total: 100, grade: "A+", gradeClass: "grade-A" },
+                    { code: "CS204", name: "Economics for Engineers", credits: 4, marks: 85, total: 100, grade: "A+", gradeClass: "grade-A" }
+                ]
+            },
+            4: {
+                title: "Semester 4 Results - Academic Year 2024-25",
+                gpa: "8.80",
+                courses: [
+                    { code: "CS301", name: "Design & Analysis of Algorithm", credits: 4, marks: 90, total: 100, grade: "A+", gradeClass: "grade-A" },
+                    { code: "CS302", name: "Discrete Mathematics", credits: 4, marks: 88, total: 100, grade: "A+", gradeClass: "grade-A" },
+                    { code: "CS303", name: "Computer Architecture", credits: 3, marks: 86, total: 100, grade: "A+", gradeClass: "grade-A" },
+                    { code: "CS304", name: "Biology for Engineers", credits: 3, marks: 89, total: 100, grade: "A+", gradeClass: "grade-A" }
+                ]
+            },
+            5: {
+                title: "Semester 5 Results - Academic Year 2025-26",
+                gpa: "8.75",
+                courses: [
+                    { code: "CS501", name: "Artificial Intelligence", credits: 4, marks: 88, total: 100, grade: "A+", gradeClass: "grade-A" },
+                    { code: "CS502", name: "Computer Graphics", credits: 3, marks: 82, total: 100, grade: "A", gradeClass: "grade-A" },
+                    { code: "CS503", name: "Theory of Computation", credits: 3, marks: 91, total: 100, grade: "O", gradeClass: "grade-O" },
+                    { code: "CS504", name: "Data Mining", credits: 4, marks: 85, total: 100, grade: "A+", gradeClass: "grade-A" },
+                    { code: "CS505", name: "Cloud Computing", credits: 3, marks: 79, total: 100, grade: "A", gradeClass: "grade-A" }
+                ]
+            }
+        };
+
+        function showSemester(sem) {
+            const tabs = document.querySelectorAll('.semester-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            tabs[sem - 1].classList.add('active');
+
+            const data = semesterData[sem];
+            document.getElementById('semesterTitle').textContent = data.title;
+            document.getElementById('semesterGPA').textContent = data.gpa;
+
+            const tbody = document.getElementById('resultsTableBody');
+            tbody.innerHTML = data.courses.map(course => `
+                <tr>
+                    <td class="course-code">${course.code}</td>
+                    <td class="course-name">${course.name}</td>
+                    <td class="credits-info">${course.credits}</td>
+                    <td>${course.marks}</td>
+                    <td>${course.total}</td>
+                    <td><span class="grade-badge ${course.gradeClass}">${course.grade}</span></td>
+                </tr>
+            `).join('');
+
+            const totalCredits = data.courses.reduce((sum, c) => sum + c.credits, 0);
+            const totalMarks = data.courses.reduce((sum, c) => sum + c.marks, 0);
+            const totalPossible = data.courses.reduce((sum, c) => sum + c.total, 0);
+            const percentage = Math.round((totalMarks / totalPossible) * 100);
+
+            document.getElementById('totalCredits').textContent = totalCredits;
+            document.getElementById('creditsEarned').textContent = totalCredits;
+            document.getElementById('totalMarks').textContent = totalMarks;
+            document.getElementById('percentage').textContent = percentage + '%';
+        }
+
+        function downloadMarksheet() {
+            alert('📄 Downloading Semester Marksheet...\n\nYour marksheet would be downloaded as PDF in production.');
+        }
+
+        function downloadTranscript() {
+            alert('📋 Downloading Complete Transcript...\n\nYour complete academic transcript would be downloaded as PDF.');
+        }
+
+        function goBack() {
+            alert('Returning to Student Dashboard...');
+        }
+        function goBack() {
+    window.location.href = "studentdash.html";
+}
+    </script>
+</body>
+</html>

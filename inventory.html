@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management - University Information System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%);
+            color: white;
+            padding: 1.2rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .back-btn {
+            padding: 0.6rem 1.5rem;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: #2c2c2c;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            padding: 0.9rem 2rem;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab-btn:hover {
+            border-color: #f4e4a1;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            border-color: #f4e4a1;
+            color: #2c2c2c;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-left: 4px solid #f4e4a1;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.12);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c2c2c;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .form-container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            max-width: 900px;
+        }
+
+        .form-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #f4e4a1;
+        }
+
+        .form-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .form-header h3 {
+            color: #2c2c2c;
+            font-size: 1.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #2c2c2c;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.9rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #f4e4a1;
+            box-shadow: 0 0 0 3px rgba(244, 228, 161, 0.2);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 0.9rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f4e4a1 0%, #e8d67a 100%);
+            color: #2c2c2c;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(244, 228, 161, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #2c2c2c;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .table-header h3 {
+            color: #2c2c2c;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-box {
+            padding: 0.6rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            width: 250px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #2c2c2c;
+        }
+
+        .filter-select {
+            padding: 0.6rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #2c2c2c;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #fafafa;
+            border-bottom: 2px solid #f4e4a1;
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #2c2c2c;
+            font-size: 0.9rem;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-available {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+        }
+
+        .status-in-use {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+            color: #856404;
+        }
+
+        .status-maintenance {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+        }
+
+        .status-damaged {
+            background: linear-gradient(135deg, #e0e0e0 0%, #d0d0d0 100%);
+            color: #383838;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.4rem 0.9rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-edit {
+            background: #fff9e6;
+            color: #f4a10d;
+        }
+
+        .btn-edit:hover {
+            background: #f4a10d;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .btn-delete:hover {
+            background: #c62828;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tab-container {
+                flex-direction: column;
+            }
+
+            .table-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header-actions {
+                flex-direction: column;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <h2 class="page-title">Inventory Management</h2>
+        <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+    </div>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">📦</div>
+                </div>
+                <div class="stat-value" id="totalItems">0</div>
+                <div class="stat-label">Total Items</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">✅</div>
+                </div>
+                <div class="stat-value" id="availableItems">0</div>
+                <div class="stat-label">Available</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">🔧</div>
+                </div>
+                <div class="stat-value" id="maintenanceItems">0</div>
+                <div class="stat-label">In Maintenance</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">⚠️</div>
+                </div>
+                <div class="stat-value" id="damagedItems">0</div>
+                <div class="stat-label">Damaged</div>
+            </div>
+        </div>
+
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="switchTab('add')">➕ Add Equipment</button>
+            <button class="tab-btn" onclick="switchTab('view')">📋 View Inventory</button>
+        </div>
+
+        <!-- Add Equipment Tab -->
+        <div id="add-tab" class="tab-content active">
+            <div class="form-container">
+                <div class="form-header">
+                    <div class="form-icon">📦</div>
+                    <h3>Add New Equipment</h3>
+                </div>
+
+                <form id="equipmentForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="equipmentName">Equipment Name *</label>
+                            <input type="text" id="equipmentName" name="equipmentName" required placeholder="Enter equipment name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="equipmentId">Equipment ID *</label>
+                            <input type="text" id="equipmentId" name="equipmentId" required placeholder="e.g., EQ-2024-001">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="category">Category *</label>
+                            <select id="category" name="category" required>
+                                <option value="">Select Category</option>
+                                <option value="Computers">Computers</option>
+                                <option value="Laboratory">Laboratory Equipment</option>
+                                <option value="Furniture">Furniture</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Sports">Sports Equipment</option>
+                                <option value="Library">Library Resources</option>
+                                <option value="Medical">Medical Equipment</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="location">Location *</label>
+                            <select id="location" name="location" required>
+                                <option value="">Select Location</option>
+                                <option value="Computer Lab 1">Computer Lab 1</option>
+                                <option value="Computer Lab 2">Computer Lab 2</option>
+                                <option value="Physics Lab">Physics Lab</option>
+                                <option value="Chemistry Lab">Chemistry Lab</option>
+                                <option value="Main Library">Main Library</option>
+                                <option value="Auditorium">Auditorium</option>
+                                <option value="Admin Block">Admin Block</option>
+                                <option value="Sports Complex">Sports Complex</option>
+                                <option value="Classroom Building A">Classroom Building A</option>
+                                <option value="Classroom Building B">Classroom Building B</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="quantity">Quantity *</label>
+                            <input type="number" id="quantity" name="quantity" required min="1" placeholder="Enter quantity">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="status">Status *</label>
+                            <select id="status" name="status" required>
+                                <option value="">Select Status</option>
+                                <option value="Available">Available</option>
+                                <option value="In Use">In Use</option>
+                                <option value="Maintenance">Under Maintenance</option>
+                                <option value="Damaged">Damaged</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="purchaseDate">Purchase Date</label>
+                            <input type="date" id="purchaseDate" name="purchaseDate">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cost">Cost (₹)</label>
+                            <input type="number" id="cost" name="cost" step="0.01" placeholder="Enter cost">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="description">Description</label>
+                            <textarea id="description" name="description" placeholder="Enter equipment description, specifications, or notes"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset</button>
+                        <button type="submit" class="btn btn-primary">Add Equipment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- View Inventory Tab -->
+        <div id="view-tab" class="tab-content">
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>
+                        <span>📋</span>
+                        Inventory List
+                    </h3>
+                    <div class="header-actions">
+                        <select class="filter-select" id="statusFilter" onchange="filterInventory()">
+                            <option value="all">All Status</option>
+                            <option value="Available">Available</option>
+                            <option value="In Use">In Use</option>
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Damaged">Damaged</option>
+                        </select>
+                        <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search equipment..." onkeyup="searchInventory()">
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Equipment ID</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Location</th>
+                                <th>Quantity</th>
+                                <th>Status</th>
+                                <th>Purchase Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let inventory = [
+            { id: 'EQ-2024-001', name: 'Dell Desktop Computer', category: 'Computers', location: 'Computer Lab 1', quantity: 45, status: 'Available', purchaseDate: '2024-01-15', cost: 45000 },
+            { id: 'EQ-2024-002', name: 'HP Laptop', category: 'Computers', location: 'Computer Lab 2', quantity: 30, status: 'In Use', purchaseDate: '2024-02-20', cost: 55000 },
+            { id: 'EQ-2024-003', name: 'Microscope', category: 'Laboratory', location: 'Physics Lab', quantity: 15, status: 'Available', purchaseDate: '2024-03-10', cost: 25000 },
+            { id: 'EQ-2024-004', name: 'Projector', category: 'Electronics', location: 'Auditorium', quantity: 5, status: 'Maintenance', purchaseDate: '2023-11-05', cost: 75000 },
+            { id: 'EQ-2024-005', name: 'Laboratory Tables', category: 'Furniture', location: 'Chemistry Lab', quantity: 20, status: 'Available', purchaseDate: '2024-01-20', cost: 8000 }
+        ];
+
+        function switchTab(tab) {
+            const addTab = document.getElementById('add-tab');
+            const viewTab = document.getElementById('view-tab');
+            const tabBtns = document.querySelectorAll('.tab-btn');
+
+            tabBtns.forEach(btn => btn.classList.remove('active'));
+
+            if (tab === 'add') {
+                addTab.classList.add('active');
+                viewTab.classList.remove('active');
+                tabBtns[0].classList.add('active');
+            } else {
+                viewTab.classList.add('active');
+                addTab.classList.remove('active');
+                tabBtns[1].classList.add('active');
+                renderInventory();
+                updateStats();
+            }
+        }
+
+        function renderInventory(filteredInventory = inventory) {
+            const tbody = document.getElementById('inventoryTableBody');
+            
+            if (filteredInventory.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: #999;">No equipment found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filteredInventory.map(item => `
+                <tr>
+                    <td><strong>${item.id}</strong></td>
+                    <td>${item.name}</td>
+                    <td>${item.category}</td>
+                    <td>${item.location}</td>
+                    <td><strong>${item.quantity}</strong></td>
+                    <td><span class="status-badge status-${item.status.toLowerCase().replace(' ', '-')}">${item.status}</span></td>
+                    <td>${item.purchaseDate}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn btn-edit" onclick="editEquipment('${item.id}')">Edit</button>
+                            <button class="action-btn btn-delete" onclick="deleteEquipment('${item.id}')">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('totalItems').textContent = inventory.length;
+            document.getElementById('availableItems').textContent = inventory.filter(i => i.status === 'Available').length;
+            document.getElementById('maintenanceItems').textContent = inventory.filter(i => i.status === 'Maintenance').length;
+            document.getElementById('damagedItems').textContent = inventory.filter(i => i.status === 'Damaged').length;
+        }
+
+        function searchInventory() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            let filtered = inventory.filter(item => 
+                item.name.toLowerCase().includes(searchTerm) ||
+                item.id.toLowerCase().includes(searchTerm) ||
+                item.location.toLowerCase().includes(searchTerm) ||
+                item.category.toLowerCase().includes(searchTerm)
+            );
+
+            if (statusFilter !== 'all') {
+                filtered = filtered.filter(item => item.status === statusFilter);
+            }
+
+            renderInventory(filtered);
+        }
+
+        function filterInventory() {
+            searchInventory();
+        }
+
+        document.getElementById('equipmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                id: document.getElementById('equipmentId').value,
+                name: document.getElementById('equipmentName').value,
+                category: document.getElementById('category').value,
+                location: document.getElementById('location').value,
+                quantity: parseInt(document.getElementById('quantity').value),
+                status: document.getElementById('status').value,
+                purchaseDate: document.getElementById('purchaseDate').value || 'N/A',
+                cost: parseFloat(document.getElementById('cost').value) || 0
+            };
+
+            // Check if ID already exists
+            if (inventory.some(item => item.id === formData.id)) {
+                alert('❌ Equipment ID already exists. Please use a unique ID.');
+                return;
+            }
+
+            inventory.push(formData);
+            alert('✅ Equipment added successfully!');
+            resetForm();
+            switchTab('view');
+        });
+
+        function resetForm() {
+            document.getElementById('equipmentForm').reset();
+        }
+
+        function editEquipment(id) {
+            const item = inventory.find(i => i.id === id);
+            if (confirm(`Edit equipment: ${item.name}?`)) {
+                document.getElementById('equipmentName').value = item.name;
+                document.getElementById('equipmentId').value = item.id;
+                document.getElementById('category').value = item.category;
+                document.getElementById('location').value = item.location;
+                document.getElementById('quantity').value = item.quantity;
+                document.getElementById('status').value = item.status;
+                document.getElementById('purchaseDate').value = item.purchaseDate !== 'N/A' ? item.purchaseDate : '';
+                document.getElementById('cost').value = item.cost || '';
+                
+                inventory = inventory.filter(i => i.id !== id);
+                switchTab('add');
+            }
+        }
+
+        function deleteEquipment(id) {
+            const item = inventory.find(i => i.id === id);
+            if (confirm(`Are you sure you want to delete ${item.name}?`)) {
+                inventory = inventory.filter(i => i.id !== id);
+                renderInventory();
+                updateStats();
+                alert('✅ Equipment deleted successfully!');
+            }
+        }
+
+        function goBack() {
+            alert('Returning to Admin Dashboard...');
+        }
+        function goBack() {
+    window.location.href = "UISadmindash.html";
+}
+
+
+        // Initialize
+        renderInventory();
+        updateStats();
+    </script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - University Information System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%); background-attachment: fixed; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; position: relative; }
+        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(244, 228, 161, 0.03) 1px, transparent 1px); background-size: 50px 50px; animation: gridMove 20s linear infinite; pointer-events: none; }
+        @keyframes gridMove { 0% { transform: translate(0, 0); } 100% { transform: translate(50px, 50px); } }
+        .login-container { width: 100%; max-width: 500px; position: relative; z-index: 1; }
+        .security-badge { text-align: center; margin-bottom: 1rem; }
+        .security-badge span { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(244, 228, 161, 0.1); padding: 0.6rem 1.2rem; border-radius: 25px; font-size: 0.85rem; color: #f4e4a1; font-weight: 600; border: 1px solid rgba(244, 228, 161, 0.3); }
+        .login-card { background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); overflow: hidden; border: 1px solid rgba(244, 228, 161, 0.2); }
+        .login-header { background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%); padding: 3rem 2rem; text-align: center; position: relative; border-bottom: 3px solid #f4e4a1; }
+        .login-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, #f4e4a1, transparent); }
+        .admin-badge { display: inline-block; background: linear-gradient(135deg, #f4e4a1 0%, #e8d67a 100%); padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; color: #2c2c2c; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
+        .login-icon { width: 100px; height: 100px; background: linear-gradient(135deg, #f4e4a1 0%, #e8d67a 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin: 0 auto 1.5rem; border: 5px solid white; box-shadow: 0 6px 20px rgba(244, 228, 161, 0.4); position: relative; }
+        .login-icon::after { content: ''; position: absolute; width: 110px; height: 110px; border: 2px solid rgba(244, 228, 161, 0.3); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.5; } }
+        .login-title { font-size: 2rem; font-weight: 700; color: white; margin-bottom: 0.5rem; }
+        .login-subtitle { font-size: 0.95rem; color: #f4e4a1; font-weight: 500; }
+        .login-body { padding: 2.5rem; }
+        .access-notice { background: linear-gradient(135deg, #fff9e6 0%, #f4e4a1 100%); padding: 1rem; border-radius: 10px; margin-bottom: 2rem; border-left: 4px solid #2c2c2c; }
+        .access-notice-content { display: flex; align-items: center; gap: 0.8rem; }
+        .access-icon { font-size: 1.5rem; }
+        .access-text { color: #2c2c2c; font-size: 0.9rem; line-height: 1.5; font-weight: 600; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-weight: 700; color: #2c2c2c; margin-bottom: 0.6rem; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .input-wrapper { position: relative; }
+        .input-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); font-size: 1.2rem; color: #888; }
+        .form-group input { width: 100%; padding: 1.1rem 1rem 1.1rem 3rem; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1rem; transition: all 0.3s ease; background: #fafafa; }
+        .form-group input:focus { outline: none; border-color: #f4e4a1; box-shadow: 0 0 0 4px rgba(244, 228, 161, 0.2); background: white; }
+        .password-toggle { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 1.2rem; color: #888; user-select: none; }
+        .password-toggle:hover { color: #2c2c2c; }
+        .auth-options { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; font-size: 0.9rem; }
+        .two-factor { display: flex; align-items: center; gap: 0.5rem; color: #666; font-weight: 600; }
+        .two-factor input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: #f4e4a1; }
+        .session-info { color: #666; font-size: 0.85rem; }
+        .login-btn { width: 100%; padding: 1.2rem; background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%); color: #f4e4a1; border: 2px solid #f4e4a1; border-radius: 10px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; }
+        .login-btn:hover { background: linear-gradient(135deg, #f4e4a1 0%, #e8d67a 100%); color: #2c2c2c; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(244, 228, 161, 0.4); }
+        .login-btn:active { transform: translateY(0); }
+        .divider { text-align: center; margin: 1.5rem 0; position: relative; }
+        .divider::before { content: ''; position: absolute; left: 0; top: 50%; width: 100%; height: 1px; background: #e0e0e0; }
+        .divider span { background: white; padding: 0 1rem; position: relative; color: #888; font-size: 0.85rem; font-weight: 600; }
+        .admin-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .admin-action-btn { padding: 1rem; background: #f5f5f5; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 0.85rem; font-weight: 600; color: #666; cursor: pointer; transition: all 0.3s ease; text-align: center; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+        .admin-action-btn:hover { background: #fafafa; border-color: #f4e4a1; color: #2c2c2c; }
+        .action-icon { font-size: 1.5rem; }
+        .security-info { background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%); color: white; padding: 1.2rem; border-radius: 10px; margin-top: 1.5rem; border: 1px solid rgba(244, 228, 161, 0.3); }
+        .security-info-content { display: flex; align-items: start; gap: 0.8rem; }
+        .security-info-icon { font-size: 1.2rem; color: #f4e4a1; }
+        .security-info-text { font-size: 0.85rem; line-height: 1.5; color: #f4e4a1; }
+        .footer-info { text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e0e0e0; }
+        .footer-info p { color: #888; font-size: 0.8rem; margin-bottom: 0.3rem; }
+        .footer-info a { color: #666; text-decoration: none; font-weight: 600; transition: all 0.3s ease; }
+        .footer-info a:hover { color: #2c2c2c; }
+        @media (max-width: 480px) { .login-header { padding: 2rem 1.5rem; } .login-body { padding: 1.5rem; } .login-icon { width: 80px; height: 80px; font-size: 2.5rem; } .login-title { font-size: 1.6rem; } .admin-actions { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="security-badge">
+            <span>🔒 Secure Admin Access</span>
+        </div>
+
+        <div class="login-card">
+            <div class="login-header">
+                <div class="admin-badge">🛡️ Administrator</div>
+                <div class="login-icon">⚙️</div>
+                <div class="login-title">Admin Control Panel</div>
+                <div class="login-subtitle">University Information System</div>
+            </div>
+            
+            <div class="login-body">
+                <div class="access-notice">
+                    <div class="access-notice-content">
+                        <span class="access-icon">⚠️</span>
+                        <div class="access-text">
+                            Restricted Access: This portal is exclusively for authorized university administrators only.
+                        </div>
+                    </div>
+                </div>
+
+                <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+                    <div class="form-group">
+                        <label for="adminId">Admin ID</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">👤</span>
+                            <input type="text" id="adminId" placeholder="Enter your admin ID" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Secure Password</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔐</span>
+                            <input type="password" id="password" placeholder="Enter your password" required>
+                            <span class="password-toggle" onclick="togglePassword()">👁️</span>
+                        </div>
+                    </div>
+
+                    <div class="auth-options">
+                        <label class="two-factor">
+                            <input type="checkbox" id="twoFactor">
+                            <span>Enable 2FA</span>
+                        </label>
+                        <span class="session-info">Session: 8 hours</span>
+                    </div>
+
+                    <button type="submit" class="login-btn">🚀 Access Dashboard</button>
+                </form>
+
+                <div class="divider">
+                    <span>Administrative Tools</span>
+                </div>
+
+                <div class="admin-actions">
+                    <a href="#" class="admin-action-btn" onclick="systemLogs(event)">
+                        <span class="action-icon">📋</span>
+                        <span>System Logs</span>
+                    </a>
+                    <a href="#" class="admin-action-btn" onclick="userManagement(event)">
+                        <span class="action-icon">👥</span>
+                        <span>User Management</span>
+                    </a>
+                    <a href="#" class="admin-action-btn" onclick="systemSettings(event)">
+                        <span class="action-icon">⚙️</span>
+                        <span>System Settings</span>
+                    </a>
+                    <a href="#" class="admin-action-btn" onclick="reports(event)">
+                        <span class="action-icon">📊</span>
+                        <span>Reports</span>
+                    </a>
+                </div>
+
+                <div class="security-info">
+                    <div class="security-info-content">
+                        <span class="security-info-icon">🔒</span>
+                        <div class="security-info-text">
+                            <strong>Security Notice:</strong> All admin activities are logged and monitored. IP: <span id="userIP">Loading...</span> | Time: <span id="loginTime"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-info">
+                    <p>Protected by enterprise-grade security</p>
+                    <p><a href="#" onclick="emergencyAccess(event)">Emergency Access</a> | <a href="#" onclick="techSupport(event)">Technical Support</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.querySelector('.password-toggle');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.textContent = '👁️';
+            }
+        }
+
+        function handleAdminLogin(event) {
+            event.preventDefault();
+            
+            const adminId = document.getElementById('adminId').value;
+            const password = document.getElementById('password').value;
+            const twoFactor = document.getElementById('twoFactor').checked;
+
+            if (adminId && password) {
+                // Redirect to admin dashboard
+                window.location.href = "UISadmindash.html";
+            }
+        }
+
+        function systemLogs(event) {
+            event.preventDefault();
+            alert('📋 System Logs\n\nView comprehensive system activity logs, user actions, and security events.');
+        }
+
+        function userManagement(event) {
+            event.preventDefault();
+            alert('👥 User Management\n\nManage student accounts, faculty profiles, and access permissions.');
+        }
+
+        function systemSettings(event) {
+            event.preventDefault();
+            alert('⚙️ System Settings\n\nConfigure system parameters, security settings, and administrative preferences.');
+        }
+
+        function reports(event) {
+            event.preventDefault();
+            alert('📊 Reports\n\nGenerate and view detailed reports on academic performance, attendance, and system usage.');
+        }
+
+        function emergencyAccess(event) {
+            event.preventDefault();
+            alert('🚨 Emergency Access\n\nFor system emergencies, contact:\nIT Helpdesk: +91-XXXX-XXXXXX\nEmail: emergency@university.edu\n\nAvailable 24/7');
+        }
+
+        function techSupport(event) {
+            event.preventDefault();
+            alert('🛠️ Technical Support\n\nAdmin Support Line: +91-XXXX-XXXXXX\nEmail: admin-support@university.edu\nTimings: 24/7 Support Available');
+        }
+
+        function setLoginTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-IN', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            document.getElementById('loginTime').textContent = timeString;
+        }
+
+        function simulateIP() {
+            document.getElementById('userIP').textContent = '192.168.1.' + Math.floor(Math.random() * 255);
+        }
+
+        setLoginTime();
+        simulateIP();
+        setInterval(setLoginTime, 60000);
+    </script>
+</body>
+</html>
